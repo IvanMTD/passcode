@@ -21,10 +21,10 @@ public class Content implements Serializable {
     private String fileName;
     @Column(name = "placed_at")
     private Date placedAt;
-    @Column(name = "data_file")
-    private byte[] dataFile;
     @Column(name = "file_size")
     private long fileSize;
+    @Column(name = "hash_data")
+    private String hashData;
 
     public long getId() {
         return id;
@@ -50,20 +50,20 @@ public class Content implements Serializable {
         this.placedAt = placedAt;
     }
 
-    public byte[] getDataFile() {
-        return dataFile;
-    }
-
-    public void setDataFile(byte[] dataFile) {
-        this.dataFile = dataFile;
-    }
-
     public long getFileSize() {
         return fileSize;
     }
 
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public String getHashData() {
+        return hashData;
+    }
+
+    public void setHashData(String hashData) {
+        this.hashData = hashData;
     }
 
     @PrePersist

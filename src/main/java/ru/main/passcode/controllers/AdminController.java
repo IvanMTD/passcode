@@ -8,11 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import ru.main.passcode.dto.ContentDTO;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.main.passcode.dto.PersonDTO;
 import ru.main.passcode.services.AuthorityService;
 import ru.main.passcode.services.ContentService;
@@ -56,17 +53,15 @@ public class AdminController {
     @GetMapping("/files")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String filesPage(Model model){
-        model.addAttribute("content", new ContentDTO());
+        model.addAttribute("fileInform",contentService.finalAll());
         return "admin/files";
     }
 
     @PostMapping("/files")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public String addFiles(Model model, @ModelAttribute(name = "content") @Valid ContentDTO contentDTO, Errors errors){
-       if(errors.hasErrors()){
-           return "admin/files";
-       }
-       contentService.save(contentDTO);
-       return "redirect:/admin/files";
+    public String addFiles(Model model, @RequestParam(name = "file")MultipartFile file){
+        contentService.save(file);
+        model.addAttribute("fileInform",contentService.finalAll());
+        return "redirect:/admin/files";
     }
 }

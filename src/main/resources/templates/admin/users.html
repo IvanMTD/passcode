@@ -62,19 +62,29 @@
             <div class="medium-6 columns outer">
                 <form th:method="POST" th:action="@{/admin/users}" th:object="${person}">
                     <span>Электронная почта: </span><input type="text" th:field="*{username}">
-                    <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red">error</p>
+                    <div class="alert" th:if="${#fields.hasErrors('username')}" style="border: solid 1px red; background: pink">
+                        <p th:errors="*{username}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>
+                    </div>
 
                     <span>Пароль: </span><input type="password" th:field="*{password}">
-                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red">error</p>
+                    <div class="alert" th:if="${#fields.hasErrors('password')}" style="border: solid 1px red; background: pink">
+                        <p th:errors="*{password}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>
+                    </div>
 
                     <span>Подтверждение пароля: </span><input type="password"th:field="*{passwordConfirm}">
-                    <p th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" style="color: red">error</p>
+                    <div class="alert" th:if="${#fields.hasErrors('passwordConfirm')}" style="border: solid 1px red; background: pink">
+                        <p th:errors="*{passwordConfirm}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>
+                    </div>
 
                     <span>Имя: </span><input type="text" th:field="*{firstName}">
-                    <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" style="color: red">error</p>
+                    <div class="alert" th:if="${#fields.hasErrors('firstName')}" style="border: solid 1px red; background: pink">
+                        <p th:errors="*{firstName}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>
+                    </div>
 
                     <span>Фамилия: </span><input type="text" th:field="*{lastname}">
-                    <p th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}" style="color: red">error</p>
+                    <div class="alert" th:if="${#fields.hasErrors('lastname')}" style="border: solid 1px red; background: pink">
+                        <p th:errors="*{lastname}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>
+                    </div>
 
                     <span>Роль: </span>
                     <label>

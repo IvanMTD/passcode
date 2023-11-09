@@ -39,25 +39,80 @@
         <!-- You can now combine a row and column if you just need a 12 column row -->
         <div class="row">
             <div class="medium-6 columns outer">
-
+                <div class="tabs" data-tabs="nn1osr-tabs" id="example-tabs">
+                    <h4 style="text-align: center">Все файлы</h4>
+                </div>
+                <div class="tabs-content" data-tabs-content="example-tabs">
+                    <div class="tabs-panel is-active" id="panel1" aria-hidden="false">
+                        <div class="media-object stack-for-small" th:each="f : ${fileInform}">
+                            <a th:href="@{/admin/files/{id}(id=${f.getId()})}"  style="color: black">
+                                <div class="media-object-section">
+                                    <img class="thumbnail" src="https://placehold.it/200x200">
+                                </div>
+                                <div class="media-object-section">
+                                    <h5 th:text="${f.getFileName()}"></h5>
+                                    <p th:text="${f.getPlacedAt()}"></p>
+                                    <p th:text="${f.getFileSize()}"></p>
+                                    <p th:text="${f.getHashData()}"></p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="medium-6 columns outer">
-                <form th:method="POST" th:action="@{/admin/files}" th:object="${content}" enctype="multipart/form-data">
-                    <span>Имя файла: </span>
-                    <input type="text" th:field="*{fileName}">
-                    <p th:if="${#fields.hasErrors('fileName')}" th:errors="*{fileName}" style="color: red">error</p>
-
+                <form id="uploadForm" th:method="POST" th:action="@{/admin/files}" enctype="multipart/form-data">
                     <span>Выберите файл: </span>
-                    <input type="file" th:field="*{dataFile}">
-                    <p th:if="${#fields.hasErrors('dataFile')}" th:errors="*{dataFile}" style="color: red">error</p>
-
+                    <input type="file" name="file" id="file">
                     <p>
-                        <input type="submit" value="Подтвердить">
+                        <input type="submit" value="Загрузить">
                     </p>
+                    <progress id="progressBar" value="0" max="100"></progress>
                 </form>
             </div>
 
+            <script>
+                const form = document.getElementById('uploadForm')
+                const fileInput = document.getElementById('file')
+                const progressBar = document.getElementById('progressBar')
+
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault()
+                    const fileToUpload = fileInput.files[0]
+                    const formSent = new FormData(form)
+                    const xhr = new XMLHttpRequest()
+
+                    if (fileInput.files.length > 0) {
+                        formSent.append('uploadForm_File', fileToUpload)
+
+                        // собираем запрос и подписываемся на событие progress
+                        xhr.upload.addEventListener('progress', progressHandler, false)
+                        xhr.addEventListener('load', loadHandler, false)
+                        xhr.open('POST', '/admin/files')
+                        xhr.send(formSent)
+                    } else {
+                        alert('Сначала выберите файл')
+                    }
+                    return false
+                });
+
+                function progressHandler(event) {
+                    // считаем размер загруженного и процент от полного размера
+                    //const loadedMb = (event.loaded/BYTES_IN_MB).toFixed(1)
+                    //const totalSizeMb = (event.total/BYTES_IN_MB).toFixed(1)
+                    const percentLoaded = Math.round((event.loaded / event.total) * 100)
+
+                    progressBar.value = percentLoaded
+                    //sizeText.textContent = `${loadedMb} из ${totalSizeMb} МБ`
+                    //statusText.textContent = `Загружено ${percentLoaded}% | `
+                }
+
+                function loadHandler(event) {
+                    //statusText.textContent = event.target.responseText
+                    progressBar.value = 0
+                }
+            </script>
             <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
             <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
             <script>

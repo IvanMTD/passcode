@@ -24,7 +24,7 @@ public class PersonDTO {
     @Size(min = 2, max = 10, message = "Имя может быть от 2 до 10 символов")
     @Pattern(regexp = "^[А-Я][а-я]+", message = "Имя должно быть в формате: 'Иван'")
     private String firstName;
-    @Pattern(regexp = "^[А-Я][а-я]+", message = "Имя должно быть в формате: 'Иванов'")
+    @Pattern(regexp = "^[А-Я][а-я]+", message = "Фамилия должно быть в формате: 'Иванов'")
     private String lastname;
     private Authority authority;
 }

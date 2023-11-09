@@ -27,4 +27,16 @@ public class MainController {
         logoutHandler.logout(request, response, authentication);
         return "redirect:/";
     }
+
+    @GetMapping("/contact")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public String contactPage(){
+        return "info/contact";
+    }
+
+    @GetMapping("/help")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public String helpPage(){
+        return "info/help";
+    }
 }
