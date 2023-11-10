@@ -64,14 +64,9 @@
                     <li class="disabled" th:if="${currentPage} == 0">Previous <span class="show-for-sr">page</span></li>
                     <li th:if="${currentPage} >= 1"><a th:href="@{/admin/users/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
 
+                    <li th:if="${currentPage} != 0"><a th:href="@{/admin/users/{page}(page=${currentPage - 1})}" th:text="${currentPage}">num</a></li>
                     <li class="current"><span class="show-for-sr">You're on page</span><span th:text="${currentPage + 1}"> num</span></li>
-                    <!--<li><a href="#" aria-label="Page 2">2</a></li>
-                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
-                    <li><a href="#" aria-label="Page 3">3</a></li>
-                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
-                    <li><a href="#" aria-label="Page 4">4</a></li>
-                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
-                    <li><a href="#" aria-label="Page 4">4</a></li>-->
+                    <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/users/{page}(page=${currentPage + 1})}" th:text="${currentPage + 2}">num</a></li>
 
                     <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
                     <li th:if="${currentPage+1} != ${totalPages}"><a th:href="@{/admin/users/{page}(page=${currentPage + 1})}" aria-label="Next page">Next<span class="show-for-sr">page</span></a></li>
