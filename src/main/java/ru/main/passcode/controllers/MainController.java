@@ -13,7 +13,15 @@ public class MainController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/")
     public String homePage(){
+        //return "redirect:/help";
         return "home";
+    }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/send")
+    public String sendMessage(){
+
+        return "redirect:/";
     }
 
     @GetMapping("/login")

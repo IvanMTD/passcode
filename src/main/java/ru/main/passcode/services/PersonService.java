@@ -12,6 +12,7 @@ import ru.main.passcode.models.Person;
 import ru.main.passcode.repositories.PersonRepository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,5 +56,13 @@ public class PersonService implements UserDetailsService {
             newPersonList.add(personDTO);
         }
         return newPersonList;
+    }
+
+    public List<Person> findAll() {
+        return personRepository.findAll();
+    }
+
+    public void delete(long id) {
+        personRepository.deleteById(id);
     }
 }

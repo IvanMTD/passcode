@@ -25,8 +25,8 @@
                 <li class="has-submenu is-dropdown-submenu-parent is-down-arrow" role="menuitem" tabindex="0" title="One" aria-haspopup="true">
                     <a href="#" tabindex="-1">Действия</a>
                     <ul class="submenu menu vertical is-dropdown-submenu first-sub" data-submenu="" aria-hidden="true" tabindex="-1" role="menu" style="">
-                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/users}" tabindex="-1" style="color: darkblue">Пользователи</a></li>
-                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/files}" tabindex="-1" style="color: darkblue">Файлы</a></li>
+                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/users/0}" tabindex="-1" style="color: darkblue">Пользователи</a></li>
+                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/files/0}" tabindex="-1" style="color: darkblue">Файлы</a></li>
                     </ul>
                 </li>
                 <li role="menuitem" tabindex="0"><a th:href="@{/help}" tabindex="-1">Справка</a></li>
@@ -45,24 +45,42 @@
                 <div class="tabs-content" data-tabs-content="example-tabs">
                     <div class="tabs-panel is-active" id="panel1" aria-hidden="false">
                         <div class="media-object stack-for-small" th:each="f : ${fileInform}">
-                            <a th:href="@{/admin/files/{id}(id=${f.getId()})}"  style="color: black">
-                                <div class="media-object-section">
-                                    <img class="thumbnail" src="https://placehold.it/200x200">
-                                </div>
-                                <div class="media-object-section">
-                                    <h5 th:text="${f.getFileName()}"></h5>
-                                    <p th:text="${f.getPlacedAt()}"></p>
-                                    <p th:text="${f.getFileSize()}"></p>
-                                    <p th:text="${f.getHashData()}"></p>
-                                </div>
-                            </a>
+                            <div class="media-object-section">
+                                <img class="thumbnail" src="https://placehold.it/200x200">
+                            </div>
+                            <div class="media-object-section">
+                                <p th:text="'Имя: ' + ${f.getFileName()}"></p>
+                                <p th:text="'Дата: ' + ${f.getPlacedAt()}"></p>
+                                <p th:text="'Размер: ' + ${f.getFileSize()}"></p>
+                            </div>
+                            <div class="tabs-content">
+                                <form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
+                                    <input type="submit" value="Удалить">
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <ul class="pagination margin-bottom-2" role="navigation" aria-label="Pagination">
+                    <li class="disabled" th:if="${currentPage} == 0">Previous <span class="show-for-sr">page</span></li>
+                    <li th:if="${currentPage} >= 1"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
+
+                    <li class="current"><span class="show-for-sr">You're on page</span><span th:text="${currentPage + 1}"> num</span></li>
+                    <!--<li><a href="#" aria-label="Page 2">2</a></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                    <li><a href="#" aria-label="Page 3">3</a></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                    <li><a href="#" aria-label="Page 4">4</a></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                    <li><a href="#" aria-label="Page 4">4</a></li>-->
+
+                    <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
+                    <li th:if="${currentPage+1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" aria-label="Next page">Next<span class="show-for-sr">page</span></a></li>
+                </ul>
             </div>
 
             <div class="medium-6 columns outer">
-                <form id="uploadForm" th:method="POST" th:action="@{/admin/files}" enctype="multipart/form-data">
+                <form id="uploadForm" th:method="POST" th:action="@{/admin/files/add}" enctype="multipart/form-data">
                     <span>Выберите файл: </span>
                     <input type="file" name="file" id="file">
                     <p>
@@ -89,11 +107,12 @@
                         // собираем запрос и подписываемся на событие progress
                         xhr.upload.addEventListener('progress', progressHandler, false)
                         xhr.addEventListener('load', loadHandler, false)
-                        xhr.open('POST', '/admin/files')
+                        xhr.open('POST', '/admin/files/add')
                         xhr.send(formSent)
                     } else {
                         alert('Сначала выберите файл')
                     }
+
                     return false
                 });
 

@@ -25,8 +25,8 @@
                 <li class="has-submenu is-dropdown-submenu-parent is-down-arrow" role="menuitem" tabindex="0" title="One" aria-haspopup="true">
                     <a href="#" tabindex="-1">Действия</a>
                     <ul class="submenu menu vertical is-dropdown-submenu first-sub" data-submenu="" aria-hidden="true" tabindex="-1" role="menu" style="">
-                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/users}" tabindex="-1" style="color: darkblue">Пользователи</a></li>
-                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/files}" tabindex="-1" style="color: darkblue">Файлы</a></li>
+                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/users/0}" tabindex="-1" style="color: darkblue">Пользователи</a></li>
+                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/files/0}" tabindex="-1" style="color: darkblue">Файлы</a></li>
                     </ul>
                 </li>
                 <li role="menuitem" tabindex="0"><a th:href="@{/help}" tabindex="-1">Справка</a></li>
@@ -45,22 +45,41 @@
                 <div class="tabs-content" data-tabs-content="example-tabs">
                     <div class="tabs-panel is-active" id="panel1" aria-hidden="false">
                         <div class="media-object stack-for-small" th:each="p : ${persons}">
-                            <a th:href="@{/admin/users/{id}(id=${p.getId()})}"  style="color: black">
-                                <div class="media-object-section">
-                                    <img class="thumbnail" src="https://placehold.it/200x200">
-                                </div>
-                                <div class="media-object-section">
-                                    <h5 th:text="${p.getFirstName()} + ' ' + ${p.getLastname()}"></h5>
-                                    <p th:text="${p.getUsername()}"></p>
-                                </div>
-                            </a>
+                            <!--<div class="media-object-section">
+                                <img class="thumbnail" src="https://placehold.it/200x200">
+                            </div>-->
+                            <div class="media-object-section">
+                                <h5 th:text="${p.getFirstName()} + ' ' + ${p.getLastname()}"></h5>
+                                <p th:text="${p.getUsername()}"></p>
+                            </div>
+                            <div class="tabs-content">
+                                <form th:method="POST" th:action="@{/admin/users/delete/{id}(id=${p.getId()})}">
+                                    <input type="submit" value="Удалить">
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <ul class="pagination margin-bottom-2" role="navigation" aria-label="Pagination">
+                    <li class="disabled" th:if="${currentPage} == 0">Previous <span class="show-for-sr">page</span></li>
+                    <li th:if="${currentPage} >= 1"><a th:href="@{/admin/users/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
+
+                    <li class="current"><span class="show-for-sr">You're on page</span><span th:text="${currentPage + 1}"> num</span></li>
+                    <!--<li><a href="#" aria-label="Page 2">2</a></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                    <li><a href="#" aria-label="Page 3">3</a></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                    <li><a href="#" aria-label="Page 4">4</a></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span> 1</li>
+                    <li><a href="#" aria-label="Page 4">4</a></li>-->
+
+                    <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
+                    <li th:if="${currentPage+1} != ${totalPages}"><a th:href="@{/admin/users/{page}(page=${currentPage + 1})}" aria-label="Next page">Next<span class="show-for-sr">page</span></a></li>
+                </ul>
             </div>
 
             <div class="medium-6 columns outer">
-                <form th:method="POST" th:action="@{/admin/users}" th:object="${person}">
+                <form th:method="POST" th:action="@{/admin/users/add}" th:object="${person}">
                     <span>Электронная почта: </span><input type="text" th:field="*{username}">
                     <div class="alert" th:if="${#fields.hasErrors('username')}" style="border: solid 1px red; background: pink">
                         <p th:errors="*{username}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>

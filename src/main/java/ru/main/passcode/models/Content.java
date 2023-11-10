@@ -26,6 +26,8 @@ public class Content implements Serializable {
     @Column(name = "hash_data")
     private String hashData;
 
+    //status обработки - начата - окончена enum
+
     public long getId() {
         return id;
     }
