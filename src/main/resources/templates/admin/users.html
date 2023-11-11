@@ -35,8 +35,8 @@
         <div class="row">
             <div class="medium-6 columns">
                 <h4>Пользователи</h4>
-                <div class="media-object stack-for-small">
-                    <div class="media-object-section" th:each="p : ${persons}" style="padding: 10px">
+                <div class="media-object stack-for-small" th:each="p : ${persons}">
+                    <div class="media-object-section" style="padding: 10px">
                         <div style="border: solid 1px gray; padding: 5px; border-radius: 5%">
                             <ul class="spisok">
                                 <li class="title-name" th:text="${p.getFirstName()} + ' ' + ${p.getLastname()}">full_name</li>
