@@ -38,53 +38,16 @@
 
         <!-- You can now combine a row and column if you just need a 12 column row -->
         <div class="row">
-            <div class="medium-6 columns outer">
 
-        <!--<table>
-          <thead>
-            <tr>
-              <th width="30">П/Н</th>
-              <th width="350">Название файла</th>
-              <th width="50">Статус</th>
-              <th width="50">Обнаружение</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>This is longer content Donec id elit non mi porta gravida at eget metus.</td>
-              <td>В обработке</td>
-              <td>Не обнаружено</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>This is longer Content Goes Here Donec id elit non mi porta gravida at eget metus.</td>
-              <td>Обработан</td>
-              <td>Внимание!</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>This is longer Content Goes Here Donec id elit non mi porta gravida at eget metus.</td>
-              <td>В обработке</td>
-              <td>Не обнаружено</td>
-            </tr>
-          </tbody>
-        </table>-->
+            <form th:method="GET" th:action="@{/send}">
+                <input type="submit" value="send">
+            </form>
 
-        </div>
-        <div class="medium-6 large-5 columns">
-
-        </div>
-
-        <div class="column row">
-        </div>
-
-
-        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
-        <script>
-            $(document).foundation();
-        </script>
+            <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+            <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
+            <script>
+                $(document).foundation();
+            </script>
         </div>
     </body>
 </html>

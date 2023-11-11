@@ -28,8 +28,6 @@ public class AdminController {
 
     private int currentPage = 0;
     private int currentPage2 = 0;
-    private int lastPage = 0;
-    private int lastPage2 = 0;
     private int itemOnPage = 5;
     private int itemOnPage2 = 5;
     private int totalPages;
@@ -55,7 +53,6 @@ public class AdminController {
                 totalPages = personCount / itemOnPage;
             }
         }
-        lastPage = currentPage;
         currentPage = page;
         Pageable pageable = PageRequest.of(currentPage,itemOnPage);
 
@@ -105,6 +102,7 @@ public class AdminController {
     @GetMapping("/files/{page}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String filesPage(Model model, @PathVariable(name = "page") int page){
+        //System.out.println("Обновление!");
         int fileCount = contentService.findAll().size();
         if(fileCount == 0){
             totalPages2 = 1;
@@ -119,11 +117,10 @@ public class AdminController {
                 totalPages2 = fileCount / itemOnPage2;
             }
         }
-        lastPage2 = currentPage2;
         currentPage2 = page;
         Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
         model.addAttribute("totalPages", totalPages2);
-        model.addAttribute("currentPage", lastPage2);
+        model.addAttribute("currentPage", currentPage2);
         model.addAttribute("itemOnPage",itemOnPage2);
         model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
         return "admin/files";

@@ -12,11 +12,22 @@
     font-size: 26px;
     color: #ffffff;
 }
+.title-name{
+    font-size: 22px;
+    color: #0042a5;
+    font-weight: 400;
+}
+.user-bottom{
+    padding: 10px 0 0px 0;
+}
 
 .outer {
     padding-top: 14%;
 }
 
+.download{
+    padding: 10px 0 20px 0;
+}
 .spisok{
  list-style-type: none;
   font-family: 'Raleway', sans-serif;
@@ -33,6 +44,15 @@
 .header_logo{
     width: 200px;
     padding-top: 10px;
+}
+.header_logo_sreda{
+    width: 130px;
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-bottom: 10px;
+}
+.buttom_uprav{
+     padding-top: 20%;
 }
 .header_logo-s{
     width: 170px;

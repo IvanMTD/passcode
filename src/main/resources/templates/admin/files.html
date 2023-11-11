@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html class="no-js" lang="ru">
     <head>
         <title>Система видеодетекции объектов незаконной торговли | Честный Город</title>
         <meta name="description" content="Система автоматической видеодетекции объектов незаконной торговли Честный Город">
@@ -7,6 +7,28 @@
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
         <link href="/css/style.css" rel="stylesheet">
         <link href="/css/foundation.min.css" rel="stylesheet">
+        <script>
+            var reloading;
+
+            function checkReloading() {
+                if (window.location.hash=="#autoreload") {
+                    reloading=setTimeout("window.location.reload();", 5000);
+                    document.getElementById("reloadCB").checked=true;
+                }
+            }
+
+            function toggleAutoRefresh(cb) {
+                if (cb.checked) {
+                    window.location.replace("#autoreload");
+                    reloading=setTimeout("window.location.reload();", 5000);
+                } else {
+                    window.location.replace("#");
+                    clearTimeout(reloading);
+                }
+            }
+
+            window.onload=checkReloading;
+        </script>
     </head>
 
     <body>
@@ -14,54 +36,151 @@
         <div class="top-bar">
             <div class="row">
                 <div class="top-bar-left">
-                    <a th:href="@{/}">
-                        <img class="header_logo-s" src="/img/logo.svg">
-                    </a>
+                    <img class="header_logo-s" src="/img/logo.svg">
+                </div>
+                <div class="top-bar-right">
+                    <ul class="menu">
+                    <li><a th:href="@{/admin/files/0}">Управление</a></li>
+                    <!-- <li><a href="#">Действие</a></li>
+                    <li><a href="#">Аналитика</a></li>-->
+                    <li><a th:href="@{/admin/users/0}">Контакты</a></li>
+                    <li><a th:href="@{/logout}">Выйти</a></li>
+                    </ul>
                 </div>
             </div>
-            <br>
-            <ul class="dropdown menu" data-dropdown-menu="" role="menubar" data-dropdownmenu="iixdfk-dropdownmenu">
-                <li class="menu-text" role="menuitem" tabindex="0">Управление</li>
-                <li class="has-submenu is-dropdown-submenu-parent is-down-arrow" role="menuitem" tabindex="0" title="One" aria-haspopup="true">
-                    <a href="#" tabindex="-1">Действия</a>
-                    <ul class="submenu menu vertical is-dropdown-submenu first-sub" data-submenu="" aria-hidden="true" tabindex="-1" role="menu" style="">
-                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/users/0}" tabindex="-1" style="color: darkblue">Пользователи</a></li>
-                        <li role="menuitem" class="is-submenu-item is-dropdown-submenu-item" tabindex="0"><a th:href="@{/admin/files/0}" tabindex="-1" style="color: darkblue">Файлы</a></li>
-                    </ul>
-                </li>
-                <li role="menuitem" tabindex="0"><a th:href="@{/help}" tabindex="-1">Справка</a></li>
-                <li role="menuitem" tabindex="0"><a th:href="@{/contact}" tabindex="-1">Контакты</a></li>
-                <li role="menuitem" tabindex="0"><a th:href="@{/logout}" tabindex="-1">Выход</a></li>
-            </ul>
         </div>
-        <!-- End Top Bar -->
 
+        <!-- End Top Bar -->
+        <br>
         <!-- You can now combine a row and column if you just need a 12 column row -->
+
+
         <div class="row">
-            <div class="medium-6 columns outer">
-                <div class="tabs" data-tabs="nn1osr-tabs" id="example-tabs">
-                    <h4 style="text-align: center">Все файлы</h4>
+            <div class="medium-6 columns">
+                <div class="download">
+                    <form id="uploadForm" th:method="POST" th:action="@{/admin/files/add}" enctype="multipart/form-data">
+                        <div class="grid-x">
+                            <div class="small-10 cell column">
+                                <input type="text" placeholder="C:\yours_file.mp4"  id="pathField" disabled>
+                            </div>
+                            <div class="small-2 cell column">
+                                <label class="button" onclick="document.getElementById('file').click()">Обзор</label>
+                                <input type="file" name="file" id="file" style="display:none" onchange="document.getElementById('pathField').setAttribute('value',document.getElementById('file').value)">
+                            </div>
+                            <div class="medium-12 column">
+                                <input  class="button expanded" type="submit" value="Загрузить">
+                            </div>
+                            <div class="medium-12 column">
+                                <progress class="progress" id="progressBar" value="0" max="100" style="width: 100%"></progress>
+                            </div>
+                        </div>
+                    </form>
+                    <script>
+                        const form = document.getElementById('uploadForm')
+                        const fileInput = document.getElementById('file')
+                        const progressBar = document.getElementById('progressBar')
+                        form.addEventListener('submit', function (event) {
+                            event.preventDefault()
+                            const fileToUpload = fileInput.files[0]
+                            const formSent = new FormData(form)
+                            const xhr = new XMLHttpRequest()
+
+                            if (fileInput.files.length > 0) {
+                                formSent.append('uploadForm_File', fileToUpload)
+
+                                // собираем запрос и подписываемся на событие progress
+                                xhr.upload.addEventListener('progress', progressHandler, false)
+                                xhr.addEventListener('load', loadHandler, false)
+                                xhr.open('POST', '/admin/files/add')
+                                xhr.send(formSent)
+                            } else {
+                                alert('Сначала выберите файл')
+                            }
+
+                            return false
+                        });
+                        function progressHandler(event) {
+                            progressBar.value = Math.round((event.loaded / event.total) * 100)
+                        }
+
+                        function loadHandler(event) {
+                            progressBar.value = 0
+                            window.location.reload();
+                        }
+                    </script>
                 </div>
-                <div class="tabs-content" data-tabs-content="example-tabs">
-                    <div class="tabs-panel is-active" id="panel1" aria-hidden="false">
-                        <div class="media-object stack-for-small" th:each="f : ${fileInform}">
-                            <div class="media-object-section">
-                                <img class="thumbnail" src="https://placehold.it/200x200">
-                            </div>
-                            <div class="media-object-section">
-                                <p th:text="'Имя: ' + ${f.getFileName()}"></p>
-                                <p th:text="'Дата: ' + ${f.getPlacedAt()}"></p>
-                                <p th:text="'Размер: ' + ${f.getFileSize()}"></p>
-                            </div>
-                            <div class="tabs-content">
-                                <form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
-                                    <input type="submit" value="Удалить">
-                                </form>
+
+                <h4>Все файлы</h4>
+
+                <!-- ELEMENT START -->
+                <div class="media-object stack-for-small" th:each="f : ${fileInform}">
+                    <div class="media-object-section">
+                        <img class="thumbnail" src="https://placehold.it/200x200">
+                    </div>
+                    <div class="media-object-section">
+                        <ul class="spisok">
+                            <li>Имя: <span th:text="${f.getFileName()}"></span></li>
+                            <li>Дата: <span th:text="${f.getPlacedAt()}"></span></li> <!-- исправить на дату записи видео в базе -->
+                            <li>Размер файла: <span th:text="${f.getFileSize()}"></span></li> <!-- Размер сделать в гигабайтах -->
+                        </ul>
+                        <div class="buttom_uprav button-group">
+                            <div class="row medium-10">
+                                <div class="small-4 column">
+                                    <button type="button" class="submit small button">Фото</button>
+                                </div>
+                                <div class="small-3 column">
+                                    <button type="button" class="submit small button">Видео</button>
+                                </div>
+                                <div class="small-3 column">
+                                    <form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
+                                        <input class="alert small button" type="submit" value="Удалить">
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <ul class="pagination margin-bottom-2" role="navigation" aria-label="Pagination">
+                <!-- ELEMENT END -->
+            </div>
+
+            <!-- Сложный элемент -->
+            <div class="medium-6 columns">
+
+                <div class="row">
+                    <div class="columns large-2">
+                        <div class="switch">
+                            <!--<input class="switch-input"  type="checkbox" id="exampleCheckedDisabledSwitch" name="exampleCheckedDisabledSwitch">-->
+                            <input class="switch-input" type="checkbox" onclick="toggleAutoRefresh(this);" id="reloadCB" name="reloadCB">
+                            <label class="switch-paddle" for="reloadCB">
+                                <span class="show-for-sr">Can't Touch This Checked</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="columns large-10">автообновление страницы</div>
+                </div>
+
+                <h4>Факты несанкционированной торговли</h4>
+                <img class="thumbnail" src="https://placehold.it/650x350">
+                <div class="row small-up-4">
+                    <div class="column">
+                        <img class="thumbnail" src="https://placehold.it/250x200">
+                    </div>
+                    <div class="column">
+                        <img class="thumbnail" src="https://placehold.it/250x200">
+                    </div>
+                    <div class="column">
+                        <img class="thumbnail" src="https://placehold.it/250x200">
+                    </div>
+                    <div class="column">
+                        <img class="thumbnail" src="https://placehold.it/250x200">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column row">
+            <nav aria-label="Pagination">
+                <ul class="pagination text-center" role="navigation" aria-label="Pagination">
                     <li class="disabled" th:if="${currentPage} == 0">Previous <span class="show-for-sr">page</span></li>
                     <li th:if="${currentPage} >= 1"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
 
@@ -72,67 +191,14 @@
                     <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
                     <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" aria-label="Next page">Next<span class="show-for-sr">page</span></a></li>
                 </ul>
-            </div>
-
-            <div class="medium-6 columns outer">
-                <form id="uploadForm" th:method="POST" th:action="@{/admin/files/add}" enctype="multipart/form-data">
-                    <span>Выберите файл: </span>
-                    <input type="file" name="file" id="file">
-                    <p>
-                        <input type="submit" value="Загрузить">
-                    </p>
-                    <progress id="progressBar" value="0" max="100"></progress>
-                </form>
-            </div>
-
-            <script>
-                const form = document.getElementById('uploadForm')
-                const fileInput = document.getElementById('file')
-                const progressBar = document.getElementById('progressBar')
-
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault()
-                    const fileToUpload = fileInput.files[0]
-                    const formSent = new FormData(form)
-                    const xhr = new XMLHttpRequest()
-
-                    if (fileInput.files.length > 0) {
-                        formSent.append('uploadForm_File', fileToUpload)
-
-                        // собираем запрос и подписываемся на событие progress
-                        xhr.upload.addEventListener('progress', progressHandler, false)
-                        xhr.addEventListener('load', loadHandler, false)
-                        xhr.open('POST', '/admin/files/add')
-                        xhr.send(formSent)
-                    } else {
-                        alert('Сначала выберите файл')
-                    }
-
-                    return false
-                });
-
-                function progressHandler(event) {
-                    // считаем размер загруженного и процент от полного размера
-                    //const loadedMb = (event.loaded/BYTES_IN_MB).toFixed(1)
-                    //const totalSizeMb = (event.total/BYTES_IN_MB).toFixed(1)
-                    const percentLoaded = Math.round((event.loaded / event.total) * 100)
-
-                    progressBar.value = percentLoaded
-                    //sizeText.textContent = `${loadedMb} из ${totalSizeMb} МБ`
-                    //statusText.textContent = `Загружено ${percentLoaded}% | `
-                }
-
-                function loadHandler(event) {
-                    //statusText.textContent = event.target.responseText
-                    progressBar.value = 0
-                }
-            </script>
-            <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-            <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
-            <script>
-                $(document).foundation();
-            </script>
+            </nav>
         </div>
+
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
+        <script>
+            $(document).foundation();
+        </script>
     </body>
 </html>
 

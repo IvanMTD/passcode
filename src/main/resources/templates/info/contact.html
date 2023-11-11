@@ -38,16 +38,15 @@
 
 <!-- You can now combine a row and column if you just need a 12 column row -->
 <div class="row">
-    <div class="medium-6 columns outer">
 
+    <div class="medium-4 column" th:each="content : ${contents}">
+        <hr>
+        <p th:text="${content.getId()}"></p>
+        <p th:text="${content.getFileName()}"></p>
+        <p th:text="${content.getPlacedAt()}"></p>
+        <p th:text="${content.getFileSize()}"></p>
+        <hr>
     </div>
-    <div class="medium-6 large-5 columns">
-
-    </div>
-
-    <div class="column row">
-    </div>
-
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
