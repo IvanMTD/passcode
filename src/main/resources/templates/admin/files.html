@@ -129,8 +129,8 @@
                             <div class="row medium-10">
                                 <div class="small-4 column">
                                     <form th:method="POST" th:action="@{/admin/files/get/photo/{id}(id=${f.getId()})}" th:object="${f}">
-                                        <input type="submit" value="Фото" class="submit small button disabled" th:if="${f.getImages().size()} == 0">
-                                        <input type="submit" value="Фото" class="submit small button" th:if="${f.getImages().size()} != 0">
+                                        <input type="submit" value="Фото" class="submit small button disabled" th:if="${f.getImages().size()} < 5">
+                                        <input type="submit" value="Фото" class="submit small button" th:if="${f.getImages().size()} >= 5">
                                     </form>
                                 </div>
                                 <div class="small-3 column">
@@ -166,7 +166,7 @@
 
                 <h4>Факты несанкционированной торговли</h4>
 
-                <div th:if="${images.size()} == 0">
+                <div th:if="${images.size()} < 5">
                     <img class="thumbnail" src="https://placehold.it/650x350">
                     <div class="row small-up-4">
                         <div class="column">
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                 </div>
-                <div th:if="${images.size()} != 0">
+                <div th:if="${images.size()} >= 5">
                     <img class="thumbnail" th:src="'data:image/png;base64,' + ${images.get(0)}" width="650px" height="350px"/>
                     <div class="row small-up-4">
                         <div class="column">

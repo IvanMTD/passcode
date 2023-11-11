@@ -145,6 +145,7 @@ public class AdminController {
         Content content = contentService.save(file);
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage.setVideo_id(content.getId());
+        outgoingMessage.setVideo(content.getFileName());
         messageService.sendMessage(outgoingMessage);
 
         Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
