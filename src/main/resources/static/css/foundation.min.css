@@ -3372,7 +3372,7 @@ input + .switch-paddle {
 }
 
 input:checked ~ .switch-paddle {
-    background: #2199e8
+    background: #0042a5;
 }
 
 input:checked ~ .switch-paddle::after {
