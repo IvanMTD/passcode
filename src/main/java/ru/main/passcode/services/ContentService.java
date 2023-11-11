@@ -1,6 +1,7 @@
 package ru.main.passcode.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ContentService {
@@ -24,21 +26,25 @@ public class ContentService {
 
     public Content save(MultipartFile file){
         Content content = new Content();
+        Content res = new Content();
         content.setFileName(file.getOriginalFilename());
         content.setFileSize(file.getSize());
         content.setHashData(String.valueOf(file.hashCode()));
         try {
             InputStream inputStream = file.getInputStream();
-            File savedFile = new File("./src/main/resources/saved/" + file.getOriginalFilename());
+            File savedFile = new File("./src/main/resources/static/saved/" + file.getOriginalFilename());
             if(!savedFile.exists()) {
                 FileUtils.copyInputStreamToFile(inputStream, savedFile);
-                contentRepository.save(content);
+                res = contentRepository.save(content);
+                log.info("file saved with id " + res.getId());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return content;
+        System.out.println(res.getId());
+
+        return res;
     }
 
     public List<Content> findAll() {
@@ -63,10 +69,21 @@ public class ContentService {
     public void delete(long id) {
         Optional<Content> optionalContent = contentRepository.findById(id);
         if(optionalContent.isPresent()){
+
             Content content = optionalContent.get();
-            File file = new File("./src/main/resources/saved/" + content.getFileName());
+            File file = new File("./src/main/resources/static/saved/" + content.getFileName());
             if(file.exists()){
                 if(file.delete()) {
+                    File dir = new File("./src/main/resources/result/" + content.getId());
+                    if(dir.isDirectory()){
+                        File[] files = dir.listFiles();
+                        if(files != null) {
+                            for (File f : files) {
+                                log.info("file " + f.getAbsolutePath() + " delete: " + f.delete());
+                            }
+                        }
+                    }
+                    log.info("directory " + dir.getAbsolutePath() + " delete: " + dir.delete());
                     contentRepository.deleteById(id);
                 }
             }

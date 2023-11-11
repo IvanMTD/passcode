@@ -161,6 +161,7 @@ public class AdminController {
     public String deleteFile(Model model, @PathVariable(name = "id") long id){
         contentService.delete(id);
         currentPage2 = 0;
+        images = new ArrayList<>();
         Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
         model.addAttribute("totalPages", totalPages2);
         model.addAttribute("currentPage", currentPage2);
