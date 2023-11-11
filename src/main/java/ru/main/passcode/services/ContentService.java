@@ -5,12 +5,14 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.main.passcode.dto.ContentDTO;
 import ru.main.passcode.models.Content;
 import ru.main.passcode.repositories.ContentRepository;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ContentService {
     private final ContentRepository contentRepository;
+    private final ResultService resultService;
 
     public Content save(MultipartFile file){
         Content content = new Content();
@@ -42,8 +45,19 @@ public class ContentService {
         return contentRepository.findAll();
     }
 
-    public List<Content> findAllByPageable(Pageable pageable){
-        return contentRepository.findAllByOrderByPlacedAtDesc(pageable);
+    public List<ContentDTO> findAllByPageable(Pageable pageable){
+        List<Content> contentList = contentRepository.findAllByOrderByPlacedAtDesc(pageable);
+        List<ContentDTO> contentDTOList = new ArrayList<>();
+        for(Content content : contentList){
+            ContentDTO contentDTO = new ContentDTO();
+            contentDTO.setId(content.getId());
+            contentDTO.setFileName(content.getFileName());
+            contentDTO.setFileSize(content.getFileSize());
+            contentDTO.setPlacedAt(content.getPlacedAt());
+            contentDTO.setImages(resultService.checkResult(contentDTO.getId()));
+            contentDTOList.add(contentDTO);
+        }
+        return contentDTOList;
     }
 
     public void delete(long id) {
@@ -57,5 +71,24 @@ public class ContentService {
                 }
             }
         }
+    }
+
+    public Content findById(long id) {
+        Optional<Content> optionalContent = contentRepository.findById(id);
+        return optionalContent.orElse(null);
+    }
+
+    public ContentDTO findByIdContentDTO(long id) {
+        Optional<Content> optionalContent = contentRepository.findById(id);
+        ContentDTO contentDTO = new ContentDTO();
+        if(optionalContent.isPresent()){
+            Content content = optionalContent.get();
+            contentDTO.setId(content.getId());
+            contentDTO.setFileName(content.getFileName());
+            contentDTO.setFileSize(content.getFileSize());
+            contentDTO.setPlacedAt(content.getPlacedAt());
+            contentDTO.setImages(resultService.checkResult(contentDTO.getId()));
+        }
+        return contentDTO;
     }
 }

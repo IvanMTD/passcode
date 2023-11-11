@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.main.passcode.dto.ContentDTO;
 import ru.main.passcode.dto.IncomingMessage;
 import ru.main.passcode.dto.OutgoingMessage;
 import ru.main.passcode.dto.PersonDTO;
@@ -20,7 +21,6 @@ import ru.main.passcode.services.ContentService;
 import ru.main.passcode.services.PersonService;
 import ru.main.passcode.validations.PersonValidator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +44,7 @@ public class AdminController {
     private int totalPages2;
 
     private List<IncomingMessage> messages = new ArrayList<>(); // времянка в будущем можно посадить в базу данных
+    private List<String> images = new ArrayList<>();
 
 
     // ================================================ USERS ==========================================================
@@ -113,22 +114,6 @@ public class AdminController {
     @GetMapping("/files/{page}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String filesPage(Model model, @PathVariable(name = "page") int page){
-        IncomingMessage incomingMessage = messageService.receive();
-        if(incomingMessage != null){
-            messages.add(incomingMessage);
-        }
-        for(IncomingMessage m : messages){
-            File dir = new File(m.getImages());
-            if(dir.isDirectory()){
-                File[] files = dir.listFiles();
-                for(int i=0; i<files.length; i++){
-                     if(files[i].exists()){
-
-                     }
-                }
-            }
-        }
-
         int fileCount = contentService.findAll().size();
         if(fileCount == 0){
             totalPages2 = 1;
@@ -150,6 +135,7 @@ public class AdminController {
         model.addAttribute("currentPage", currentPage2);
         model.addAttribute("itemOnPage",itemOnPage2);
         model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
+        model.addAttribute("images",images);
         return "admin/files";
     }
 
@@ -166,6 +152,7 @@ public class AdminController {
         model.addAttribute("currentPage", currentPage2);
         model.addAttribute("itemOnPage",itemOnPage2);
         model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
+        model.addAttribute("images",images);
         return "redirect:/admin/files/" + currentPage2;
     }
 
@@ -179,6 +166,41 @@ public class AdminController {
         model.addAttribute("currentPage", currentPage2);
         model.addAttribute("itemOnPage",itemOnPage2);
         model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
+        model.addAttribute("images",images);
+        return "redirect:/admin/files/" + currentPage2;
+    }
+
+    @PostMapping("/files/get/photo/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public String setupPhoto(Model model,@PathVariable(name = "id") long id){
+        images = new ArrayList<>(contentService.findByIdContentDTO(id).getImages());
+        Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
+        model.addAttribute("totalPages", totalPages2);
+        model.addAttribute("currentPage", currentPage2);
+        model.addAttribute("itemOnPage",itemOnPage2);
+        model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
+        model.addAttribute("images",images);
+        return "redirect:/admin/files/" + currentPage2;
+    }
+
+    @GetMapping("/files/resort/{num}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public String resortArray(Model model, @PathVariable(name = "num") int num){
+        String myImage = images.get(num);
+        images.remove(num);
+        List<String> copy = new ArrayList<>(images);
+        images = new ArrayList<>();
+        images.add(myImage);
+        for(String i : copy){
+            images.add(i);
+        }
+
+        Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
+        model.addAttribute("totalPages", totalPages2);
+        model.addAttribute("currentPage", currentPage2);
+        model.addAttribute("itemOnPage",itemOnPage2);
+        model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
+        model.addAttribute("images",images);
         return "redirect:/admin/files/" + currentPage2;
     }
 }
