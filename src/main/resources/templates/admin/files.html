@@ -129,8 +129,8 @@
                             <div class="row medium-10">
                                 <div class="small-4 column">
                                     <form th:method="POST" th:action="@{/admin/files/get/photo/{id}(id=${f.getId()})}" th:object="${f}">
-                                        <input type="submit" value="Фото" class="submit small button disabled" th:if="${f.getImages().size()} < 5">
-                                        <input type="submit" value="Фото" class="submit small button" th:if="${f.getImages().size()} >= 5">
+                                        <input type="submit" value="Фото" class="submit small button disabled" th:if="${f.getImages().size()} == 0">
+                                        <input type="submit" value="Фото" class="submit small button" th:if="${f.getImages().size()} != 0">
                                     </form>
                                 </div>
                                 <div class="small-3 column">
@@ -166,43 +166,24 @@
 
                 <h4>Факты несанкционированной торговли</h4>
 
-                <div th:if="${images.size()} < 5">
-                    <img class="thumbnail" src="https://placehold.it/650x350">
-                    <div class="row small-up-4">
-                        <div class="column">
-                            <img class="thumbnail" src="https://placehold.it/250x200">
-                        </div>
-                        <div class="column">
-                            <img class="thumbnail" src="https://placehold.it/250x200">
-                        </div>
-                        <div class="column">
-                            <img class="thumbnail" src="https://placehold.it/250x200">
-                        </div>
-                        <div class="column">
-                            <img class="thumbnail" src="https://placehold.it/250x200">
-                        </div>
+                <img class="thumbnail" src="https://placehold.it/650x350" th:if="${images.size()} == 0">
+                <img class="thumbnail" id="mainImg" th:src="'data:image/png;base64,' + ${images.get(0)}" width="650px" height="350px" th:if="${images.size()} >= 1">
+                <div class="row small-up-4">
+                    <div class="column" th:each="image,stat : ${images}">
+                        <img class="thumbnail" th:id="'img' + ${stat.index}" th:src="'data:image/png;base64,' + ${image}" width="250" height="200" onclick="replace(this.id)">
                     </div>
                 </div>
-                <div th:if="${images.size()} >= 5">
-                    <img class="thumbnail" th:src="'data:image/png;base64,' + ${images.get(0)}" width="650px" height="350px"/>
-                    <div class="row small-up-4">
-                        <div class="column">
-                            <a th:href="@{/admin/files/resort/{num}(num = 1)}"><img class="thumbnail" th:src="'data:image/png;base64,' + ${images.get(1)}" width="250" height="200"/></a>
-                        </div>
-                        <div class="column">
-                            <a th:href="@{/admin/files/resort/{num}(num = 2)}"><img class="thumbnail" th:src="'data:image/png;base64,' + ${images.get(2)}" width="250" height="200"/></a>
-                        </div>
-                        <div class="column">
-                            <a th:href="@{/admin/files/resort/{num}(num = 3)}"><img class="thumbnail" th:src="'data:image/png;base64,' + ${images.get(3)}" width="250" height="200"/></a>
-                        </div>
-                        <div class="column">
-                            <a th:href="@{/admin/files/resort/{num}(num = 4)}"><img class="thumbnail" th:src="'data:image/png;base64,' + ${images.get(4)}" width="250" height="200"/></a>
-                        </div>
-                    </div>
-                    <div>
-                        <button type="button" class="submit expanded button">Отправить в надзорный орган</button>
-                    </div>
+                <div>
+                    <button type="button" class="submit expanded button" th:if="${images.size()} != 0">Отправить в надзорный орган</button>
                 </div>
+                <script th:inline="javascript">
+                    function replace(id) {
+                        let currentImageSrc = document.getElementById(id).getAttribute('src');
+                        let mainImage = document.getElementById('mainImg');
+                        mainImage.setAttribute('src',currentImageSrc)
+                     }
+                </script>
+                <!--<a th:href="@{/admin/files/resort/{num}(num = 1)}"></a>-->
             </div>
         </div>
 

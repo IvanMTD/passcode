@@ -35,7 +35,7 @@ public class ResultService {
                         throw new RuntimeException(e);
                     }
                     n++;
-                    if(n>5){
+                    if(n>7){
                         break;
                     }
                 }

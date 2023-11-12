@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.main.passcode.dto.ContentDTO;
 import ru.main.passcode.dto.IncomingMessage;
 import ru.main.passcode.dto.OutgoingMessage;
 import ru.main.passcode.dto.PersonDTO;
@@ -42,6 +41,8 @@ public class AdminController {
     private int itemOnPage2 = 5;
     private int totalPages;
     private int totalPages2;
+
+    private long currentTrackedElement = -1;
 
     private List<IncomingMessage> messages = new ArrayList<>(); // времянка в будущем можно посадить в базу данных
     private List<String> images = new ArrayList<>();
@@ -130,6 +131,7 @@ public class AdminController {
         }
         currentPage2 = page;
 
+        images = contentService.findByIdContentDTO(currentTrackedElement).getImages();
         Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
         model.addAttribute("totalPages", totalPages2);
         model.addAttribute("currentPage", currentPage2);
@@ -175,6 +177,7 @@ public class AdminController {
     @PostMapping("/files/get/photo/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String setupPhoto(Model model,@PathVariable(name = "id") long id){
+        currentTrackedElement = id;
         images = new ArrayList<>(contentService.findByIdContentDTO(id).getImages());
         Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
         model.addAttribute("totalPages", totalPages2);

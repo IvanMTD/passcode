@@ -98,6 +98,7 @@ public class ContentService {
     public ContentDTO findByIdContentDTO(long id) {
         Optional<Content> optionalContent = contentRepository.findById(id);
         ContentDTO contentDTO = new ContentDTO();
+        contentDTO.setImages(new ArrayList<>());
         if(optionalContent.isPresent()){
             Content content = optionalContent.get();
             contentDTO.setId(content.getId());
