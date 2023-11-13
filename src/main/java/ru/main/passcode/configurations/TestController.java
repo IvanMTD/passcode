@@ -11,7 +11,7 @@ public class TestController {
     public int test(){
         System.out.println("Try found files");
         int num = 0;
-        File dir = new File("./src/main/resources/static/result/20/");
+        File dir = new File("./src/main/resources/static/result/0/");
         if(dir.isDirectory()){
             System.out.println("Directory " + dir.getAbsolutePath() + " exist");
             File[] files = dir.listFiles();
