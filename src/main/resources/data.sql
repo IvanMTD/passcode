@@ -27,5 +27,3 @@ create table if not exists content (
     file_size int not null,
     hash_data text not null unique
 );
-
---data_file binary large object not null,

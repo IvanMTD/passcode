@@ -60,7 +60,7 @@ public class ContentService {
             contentDTO.setFileName(content.getFileName());
             File file = new File("./src/main/resources/static/saved/" + content.getFileName());
             if(file.exists()){
-                contentDTO.setFullPath("/saved/" + file.getName());
+                contentDTO.setFullPath(file.getPath());
             }
             contentDTO.setFileSize(content.getFileSize());
             contentDTO.setPlacedAt(content.getPlacedAt());
@@ -109,7 +109,7 @@ public class ContentService {
             contentDTO.setFileName(content.getFileName());
             File file = new File("./src/main/resources/static/saved/" + content.getFileName());
             if(file.exists()){
-                contentDTO.setFullPath("/saved/" + file.getName());
+                contentDTO.setFullPath(file.getPath());
             }
             contentDTO.setFileSize(content.getFileSize());
             contentDTO.setPlacedAt(content.getPlacedAt());

@@ -173,10 +173,12 @@
                 <h4>Факты несанкционированной торговли</h4>
 
                 <img class="thumbnail" src="https://placehold.it/650x350" th:if="${images.size()} == 0">
-                <img class="thumbnail" id="mainImg" th:src="'data:image/png;base64,' + ${images.get(0)}" width="650px" height="350px" th:if="${images.size()} >= 1">
+                <!-- th:src="'data:image/png;base64,' + ${images.get(0)}" -->
+                <img class="thumbnail" id="mainImg" th:src="${images.get(0)}" width="650px" height="350px" th:if="${images.size()} >= 1">
                 <div class="row small-up-4">
                     <div class="column" th:each="image,stat : ${images}">
-                        <img class="thumbnail" th:id="'img' + ${stat.index}" th:src="'data:image/png;base64,' + ${image}" width="250" height="200" onclick="replace(this.id)">
+                        <!-- th:src="'data:image/png;base64,' + ${image}" -->
+                        <img class="thumbnail" th:id="'img' + ${stat.index}" th:src="${image}" width="250" height="200" onclick="replace(this.id)">
                     </div>
                 </div>
                 <div>

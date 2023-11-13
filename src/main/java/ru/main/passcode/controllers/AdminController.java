@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,8 @@ import ru.main.passcode.services.PersonService;
 import ru.main.passcode.validations.PersonValidator;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,6 +117,7 @@ public class AdminController {
     }
 
     // =================================================== FILES =======================================================
+
     @GetMapping("/files/{page}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String filesPage(Model model, @PathVariable(name = "page") int page){
@@ -192,19 +196,27 @@ public class AdminController {
         return "redirect:/admin/files/" + currentPage2;
     }
 
-    /*@ModelAttribute(name = "myNum")
-    public int myNum(){
-        System.out.println("Try found files");
-        int num = 0;
-        File dir = new File("./src/main/resources/static/result/20/");
-        if(dir.isDirectory()){
-            System.out.println("Directory " + dir.getAbsolutePath() + " exist");
-            File[] files = dir.listFiles();
-            if(files != null){
-                System.out.println("Found " + files.length + " files");
-                num = files.length;
-            }
+    @ResponseBody
+    @RequestMapping("/files/src/main/resources/static/saved/{fileName}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public byte[] getFile(@PathVariable String fileName){
+        File file = new File("./src/main/resources/static/saved/" + fileName);
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return num;
-    }*/
+    }
+
+    @ResponseBody
+    @RequestMapping("/files/src/main/resources/static/result/{id}/{fileName}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public byte[] getFile(@PathVariable String fileName, @PathVariable int id){
+        File file = new File("./src/main/resources/static/result/" + id + "/" + fileName);
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
