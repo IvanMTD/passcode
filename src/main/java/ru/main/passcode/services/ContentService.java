@@ -74,7 +74,7 @@ public class ContentService {
             File file = new File("./src/main/resources/static/saved/" + content.getFileName());
             if(file.exists()){
                 if(file.delete()) {
-                    File dir = new File("./src/main/resources/result/" + content.getId());
+                    File dir = new File("./src/main/resources/static/result/" + content.getId());
                     if(dir.isDirectory()){
                         File[] files = dir.listFiles();
                         if(files != null) {
