@@ -29,6 +29,30 @@
         </div>
         <!-- End Top Bar -->
 
+        <!--<button class="button" id="btn">Click</button>-->
+        <label for="myNum"></label><input id="myNum" type="number" value="0">
+
+        <script>
+            function update(){
+                let myNum = document.getElementById('myNum');
+                console.log("Try load!")
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://localhost:8080/test");
+                xhr.send();
+                xhr.responseType = "json";
+                xhr.onload = () => {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        const data = xhr.response;
+                        console.log(data)
+                        myNum.setAttribute('value',data);
+                    } else {
+                        console.log(`Error: ${xhr.status}`);
+                    }
+                };
+            }
+            button.addEventListener("click",update);
+        </script>
+
         <br>
 
         <!-- You can now combine a row and column if you just need a 12 column row -->

@@ -1,5 +1,6 @@
 package ru.main.passcode.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import ru.main.passcode.services.ContentService;
 import ru.main.passcode.services.PersonService;
 import ru.main.passcode.validations.PersonValidator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,12 +158,14 @@ public class AdminController {
         model.addAttribute("itemOnPage",itemOnPage2);
         model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
         model.addAttribute("images",images);
+
         return "redirect:/admin/files/" + currentPage2;
     }
 
     @PostMapping("/files/delete/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String deleteFile(Model model, @PathVariable(name = "id") long id){
+
         contentService.delete(id);
         currentPage2 = 0;
         images = new ArrayList<>();
@@ -188,24 +192,19 @@ public class AdminController {
         return "redirect:/admin/files/" + currentPage2;
     }
 
-    @GetMapping("/files/resort/{num}")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public String resortArray(Model model, @PathVariable(name = "num") int num){
-        String myImage = images.get(num);
-        images.remove(num);
-        List<String> copy = new ArrayList<>(images);
-        images = new ArrayList<>();
-        images.add(myImage);
-        for(String i : copy){
-            images.add(i);
+    /*@ModelAttribute(name = "myNum")
+    public int myNum(){
+        System.out.println("Try found files");
+        int num = 0;
+        File dir = new File("./src/main/resources/static/result/20/");
+        if(dir.isDirectory()){
+            System.out.println("Directory " + dir.getAbsolutePath() + " exist");
+            File[] files = dir.listFiles();
+            if(files != null){
+                System.out.println("Found " + files.length + " files");
+                num = files.length;
+            }
         }
-
-        Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
-        model.addAttribute("totalPages", totalPages2);
-        model.addAttribute("currentPage", currentPage2);
-        model.addAttribute("itemOnPage",itemOnPage2);
-        model.addAttribute("fileInform",contentService.findAllByPageable(pageable));
-        model.addAttribute("images",images);
-        return "redirect:/admin/files/" + currentPage2;
-    }
+        return num;
+    }*/
 }

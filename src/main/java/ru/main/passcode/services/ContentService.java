@@ -58,6 +58,10 @@ public class ContentService {
             ContentDTO contentDTO = new ContentDTO();
             contentDTO.setId(content.getId());
             contentDTO.setFileName(content.getFileName());
+            File file = new File("./src/main/resources/static/saved/" + content.getFileName());
+            if(file.exists()){
+                contentDTO.setFullPath("/saved/" + file.getName());
+            }
             contentDTO.setFileSize(content.getFileSize());
             contentDTO.setPlacedAt(content.getPlacedAt());
             contentDTO.setImages(resultService.checkResult(contentDTO.getId()));
@@ -103,6 +107,10 @@ public class ContentService {
             Content content = optionalContent.get();
             contentDTO.setId(content.getId());
             contentDTO.setFileName(content.getFileName());
+            File file = new File("./src/main/resources/static/saved/" + content.getFileName());
+            if(file.exists()){
+                contentDTO.setFullPath("/saved/" + file.getName());
+            }
             contentDTO.setFileSize(content.getFileSize());
             contentDTO.setPlacedAt(content.getPlacedAt());
             contentDTO.setImages(resultService.checkResult(contentDTO.getId()));

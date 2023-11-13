@@ -26,16 +26,15 @@ public class ResultService {
                 log.info("Found " + images.length + " files");
                 int n = 0;
                 for(File image : images){
-                    imgList.add("/result/" + id + "/" + image.getName());
-                    /*try {
-                        //byte[] i = Files.readAllBytes(Path.of(image.getAbsolutePath()));
-                        //imgList.add(ImageEncryptUtil.getImgData(i));
-                        imgList.add(image.getAbsolutePath());
+                    //imgList.add(image.toString());
+                    try {
+                        byte[] i = Files.readAllBytes(Path.of(image.getAbsolutePath()));
+                        imgList.add(ImageEncryptUtil.getImgData(i));
                     } catch (IOException e) {
                         System.out.println("Ошибка: " + e.getMessage());
                         log.info("Ошибка: " + e.getMessage());
                         throw new RuntimeException(e);
-                    }*/
+                    }
                     n++;
                     if(n>7){
                         break;
