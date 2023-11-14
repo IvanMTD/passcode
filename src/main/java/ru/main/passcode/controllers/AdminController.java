@@ -3,21 +3,19 @@ package ru.main.passcode.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.HtmlUtils;
 import ru.main.passcode.dto.ContentDTO;
 import ru.main.passcode.dto.IncomingMessage;
 import ru.main.passcode.dto.OutgoingMessage;
@@ -58,6 +56,9 @@ public class AdminController {
 
     private List<IncomingMessage> messages = new ArrayList<>(); // времянка в будущем можно посадить в базу данных
     private List<String> images = new ArrayList<>();
+
+    private boolean fileAdded;
+    private boolean fileDeleted;
 
 
     // ================================================ USERS ==========================================================
@@ -157,6 +158,7 @@ public class AdminController {
     @PostMapping("/files/add")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String addFiles(Model model, @RequestParam(name = "file")MultipartFile file){
+        fileAdded = true;
         Content content = contentService.save(file);
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage.setVideo_id(content.getId());
@@ -176,7 +178,7 @@ public class AdminController {
     @PostMapping("/files/delete/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public String deleteFile(Model model, @PathVariable(name = "id") long id){
-
+        fileDeleted = true;
         contentService.delete(id);
         currentPage2 = 0;
         images = new ArrayList<>();
@@ -228,15 +230,16 @@ public class AdminController {
     }
 
     @MessageMapping("/connection")
-    @SendTo("/send/contents")
-    public List<ContentDTO> connection() throws JsonProcessingException {
-       /* List<ContentDTO> contents = contentService.findAllByPageable(PageRequest.of(currentPage2,itemOnPage2));
+    @SendTo("/send/content")
+    public String connection() throws JsonProcessingException {
+        /*List<ContentDTO> contents = contentService.findAllByPageable(PageRequest.of(currentPage2,itemOnPage2));
         ContentDTO[] array = new ContentDTO[contents.size()];
         for(int i=0; i<contents.size(); i++){
             array[i] = contents.get(i);
         }
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(array);*/
-        return contentService.findAllByPageable(PageRequest.of(currentPage2,itemOnPage2));
+
+        return "";
     }
 }

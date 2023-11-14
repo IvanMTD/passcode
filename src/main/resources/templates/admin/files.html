@@ -32,6 +32,34 @@
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
         <script src="/js/content-control.js" th:inline="javascript"></script>
+        <style>
+            .blokimg {
+                position: relative;
+            }
+            .overlay{
+                min-width: 1280px;
+                display: none;
+                width: 70vw;
+                height: auto;
+                position: absolute;
+                top: -3vw;
+                left: -35vw;
+                z-index: 999;
+            }
+            .overlay .overlay_container{
+                display: table-cell;
+                vertical-align: middle;
+            }
+            .overlay_container img{
+                background-color: #AB5;
+                padding: 1px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+            }
+            .overlay:target {
+                display: table;
+            }
+        </style>
     </head>
 
     <body>
@@ -176,8 +204,21 @@
                 <h4>Факты несанкционированной торговли</h4>
 
                 <img class="thumbnail" src="https://placehold.it/650x350" th:if="${images.size()} == 0">
-                <!-- th:src="'data:image/png;base64,' + ${images.get(0)}" -->
-                <img class="thumbnail" id="mainImg" th:src="${images.get(0)}" width="650px" height="350px" th:if="${images.size()} >= 1">
+
+                <div class="blokimg" th:if="${images.size()} >= 1">
+                    <div class="overlay" id="contenedor1">
+                        <div class="overlay_container">
+                            <a href="#close">
+                                <img th:src="${images.get(0)}"/>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="#contenedor1">
+                        <!--<img src="маленькое_изображение" id="imagenM1" />-->
+                        <img class="thumbnail" id="mainImg" th:src="${images.get(0)}" width="650px" height="350px">
+                    </a>
+                </div>
+
                 <div class="row small-up-4">
                     <div class="column" th:each="image,stat : ${images}">
                         <!-- th:src="'data:image/png;base64,' + ${image}" -->

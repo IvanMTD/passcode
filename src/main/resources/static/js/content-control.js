@@ -1,8 +1,9 @@
 const stompClient = new StompJs.Client({brokerURL: 'ws://localhost:8080/websocket'});
 
 stompClient.onConnect = (frame) => {
-    stompClient.subscribe('/send/contents', (contents) => {
-        setupContents(contents.body);
+    console.log('Conected: ' + frame)
+    stompClient.subscribe('/send/content', (content) => {
+        setupContents(content.body);
     });
 };
 
@@ -15,8 +16,15 @@ stompClient.onStompError = (frame) => {
     console.error('Additional details: ' + frame.body);
 };
 
-function setupContents(contents){
-    let json = contents;
+function setupContents(content){
+    if(content.length !== 0){
+        let json = content;
+        const array = JSON.parse(json);
+        console.log(array)
+    }else{
+        console.log('nothing')
+    }
+    /*let json = contents;
     const newContent = JSON.parse(json);
     const fileInForm = "[[${fileInform}]]";
     for(let i=0; i<newContent.length; i++){
@@ -62,15 +70,16 @@ function setupContents(contents){
                 "            </div>"
             )
         }
-    }
+    }*/
 }
+
+stompClient.activate();
 
 setInterval(update,1000)
 
 function update(){
-    stompClient.activate();
     stompClient.publish({
         destination: "/app/connection"
     });
-    stompClient.deactivate();
+    /*stompClient.deactivate();*/
 }
