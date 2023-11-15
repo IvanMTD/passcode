@@ -75,11 +75,11 @@ function setupContents(content){
 
 stompClient.activate();
 
-setInterval(update,1000)
+/*setInterval(update,1000)
 
 function update(){
     stompClient.publish({
         destination: "/app/connection"
     });
-    /*stompClient.deactivate();*/
-}
+    /!*stompClient.deactivate();*!/
+}*/
