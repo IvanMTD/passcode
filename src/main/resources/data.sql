@@ -22,7 +22,7 @@ create table if not exists persons (
 
 create table if not exists content (
     id serial primary key,
-    file_name varchar(64) not null,
+    file_name text not null,
     placed_at date not null,
     file_size int not null,
     hash_data text not null unique

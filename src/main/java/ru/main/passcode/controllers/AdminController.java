@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import jakarta.validation.Valid;
+import lombok.Data;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -38,6 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
+    private final SimpMessagingTemplate template;
     private final RabbitMessageService messageService;
 
     private final AuthorityService authorityService;
@@ -56,9 +60,6 @@ public class AdminController {
 
     private List<IncomingMessage> messages = new ArrayList<>(); // времянка в будущем можно посадить в базу данных
     private List<String> images = new ArrayList<>();
-
-    private boolean fileAdded;
-    private boolean fileDeleted;
 
 
     // ================================================ USERS ==========================================================
@@ -157,14 +158,14 @@ public class AdminController {
 
     @PostMapping("/files/add")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public String addFiles(Model model, @RequestParam(name = "file")MultipartFile file){
-        fileAdded = true;
+    public String addFiles(Model model, @RequestParam(name = "file")MultipartFile file) throws JsonProcessingException {
         Content content = contentService.save(file);
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        this.template.convertAndSend("/send/content",ow.writeValueAsString(new Message(Message.ADDED,contentService.findByIdContentDTO(content.getId()))));
         OutgoingMessage outgoingMessage = new OutgoingMessage();
         outgoingMessage.setVideo_id(content.getId());
         outgoingMessage.setVideo(content.getFileName());
         messageService.sendMessage(outgoingMessage);
-
         Pageable pageable = PageRequest.of(currentPage2,itemOnPage2);
         model.addAttribute("totalPages", totalPages2);
         model.addAttribute("currentPage", currentPage2);
@@ -177,8 +178,9 @@ public class AdminController {
 
     @PostMapping("/files/delete/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public String deleteFile(Model model, @PathVariable(name = "id") long id){
-        fileDeleted = true;
+    public String deleteFile(Model model, @PathVariable(name = "id") long id) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        this.template.convertAndSend("/send/content",ow.writeValueAsString(new Message(Message.DELETED,contentService.findByIdContentDTO(id))));
         contentService.delete(id);
         currentPage2 = 0;
         images = new ArrayList<>();
@@ -231,15 +233,25 @@ public class AdminController {
 
     @MessageMapping("/connection")
     @SendTo("/send/content")
-    public String connection() throws JsonProcessingException {
-        /*List<ContentDTO> contents = contentService.findAllByPageable(PageRequest.of(currentPage2,itemOnPage2));
-        ContentDTO[] array = new ContentDTO[contents.size()];
-        for(int i=0; i<contents.size(); i++){
-            array[i] = contents.get(i);
-        }
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(array);*/
+    public String connection() {
+        // Тут пока нет реализации
+        return "{key:value}";
+    }
 
-        return "";
+    /*@Scheduled(fixedDelay = 1000)
+    public void monitoring() {
+
+    }*/
+
+    @Data
+    @RequiredArgsConstructor
+    class Message{
+        public static final int ADDED = 1;
+        public static final int DELETED = 2;
+
+        @NonNull
+        private int status;
+        @NonNull
+        private ContentDTO content;
     }
 }

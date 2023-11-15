@@ -26,25 +26,32 @@ public class ContentService {
 
     public Content save(MultipartFile file){
         Content content = new Content();
-        Content res = new Content();
-        content.setFileName(file.getOriginalFilename());
+        Content saved = new Content();
+        String fileName = file.getOriginalFilename();
+        String type = fileName.substring(fileName.length()-3);
+        Content c = contentRepository.findFirstByOrderByIdDesc();
+        String newName;
+        if(c != null) {
+            newName = "uid" + (c.getId() + 1) + "." + type;
+        }else{
+            newName = "uid" + 1 + "." + type;
+        }
+        content.setFileName(newName);
         content.setFileSize(file.getSize());
         content.setHashData(String.valueOf(file.hashCode()));
         try {
             InputStream inputStream = file.getInputStream();
-            File savedFile = new File("./src/main/resources/static/saved/" + file.getOriginalFilename());
+            File savedFile = new File("./src/main/resources/static/saved/" + newName);
             if(!savedFile.exists()) {
                 FileUtils.copyInputStreamToFile(inputStream, savedFile);
-                res = contentRepository.save(content);
-                log.info("file saved with id " + res.getId());
+                saved = contentRepository.save(content);
+                log.info("file saved with id " + saved.getId());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        System.out.println(res.getId());
-
-        return res;
+        return saved;
     }
 
     public List<Content> findAll() {
@@ -52,7 +59,7 @@ public class ContentService {
     }
 
     public List<ContentDTO> findAllByPageable(Pageable pageable){
-        List<Content> contentList = contentRepository.findAllByOrderByPlacedAtDesc(pageable);
+        List<Content> contentList = contentRepository.findAllByOrderByIdDesc(pageable);
         List<ContentDTO> contentDTOList = new ArrayList<>();
         for(Content content : contentList){
             ContentDTO contentDTO = new ContentDTO();

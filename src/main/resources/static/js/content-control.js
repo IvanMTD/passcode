@@ -1,9 +1,9 @@
 const stompClient = new StompJs.Client({brokerURL: 'ws://localhost:8080/websocket'});
 
 stompClient.onConnect = (frame) => {
-    console.log('Conected: ' + frame)
+    console.log('Connected: ' + frame)
     stompClient.subscribe('/send/content', (content) => {
-        setupContents(content.body);
+        setupContent(content.body);
     });
 };
 
@@ -16,61 +16,47 @@ stompClient.onStompError = (frame) => {
     console.error('Additional details: ' + frame.body);
 };
 
-function setupContents(content){
-    if(content.length !== 0){
-        let json = content;
-        const array = JSON.parse(json);
-        console.log(array)
-    }else{
-        console.log('nothing')
+function setupContent(content){
+    let json = content;
+    const message = JSON.parse(json);
+    let status = message.status;
+    let card = message.content;
+
+    if(status === 1){ // added
+        $('#array-structure').prepend(
+            '                     <div class="media-object stack-for-small" id="element_' + card.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
+            '                        <div class="media-object-section medium-6">\n' +
+            '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
+            '                                <source src="' + card.fullPath + '" type="video/mp4" />\n' +
+            '                            </video>\n' +
+            '                        </div>\n' +
+            '                        <div class="media-object-section" style="position: relative">\n' +
+            '                            <div class="medium-12">\n' +
+            '                                <ul class="spisok">\n' +
+            '                                    <li style="font-size: 14px">Имя: <span>' + card.fileName + '</span></li>\n' +
+            '                                    <li style="font-size: 14px">Дата: <span>' + card.placedAt + '</span></li> <!-- исправить на дату записи видео в базе -->\n' +
+            '                                    <li style="font-size: 14px">Размер файла: <span>' + card.fileSize + '</span></li> <!-- Размер сделать в гигабайтах -->\n' +
+            '                                </ul>\n' +
+            '                            </div>\n' +
+            '                            <div class="small-12 row button-group" style="position: absolute; bottom: 10px">\n' +
+            '                                <div class="small-6 column">\n' +
+            '                                    <form method="POST" action="/admin/files/get/photo/' + card.id + '">\n' +
+            '                                        <input type="submit" value="Фото" class="submit small button disabled">\n' +
+            '                                    </form>\n' +
+            '                                </div>\n' +
+            '                                <div class="small-6 column">\n' +
+            '                                    <form method="POST" action="/admin/files/delete/' + card.id + '">\n' +
+          //'                                        <input type="hidden" name="' + [[${_csrf.parameterName}]] + '" value="' + [[${_csrf.token}]] + '">' +
+            '                                        <input class="alert small button" type="submit" value="Удалить">\n' +
+            '                                    </form>\n' +
+            '                                </div>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                    </div>'
+        )
+    }else if(status === 2){ // deleted
+        document.getElementById('element_' + card.id).remove()
     }
-    /*let json = contents;
-    const newContent = JSON.parse(json);
-    const fileInForm = "[[${fileInform}]]";
-    for(let i=0; i<newContent.length; i++){
-        if(fileInForm.id !== newContent){
-            $("#uploadFiles").add(
-                "<div className=\"media-object stack-for-small\" id=\"uploadFiles\"\n" +
-                "                 style=\"border: solid 1px lightgray; padding: 10px; background-color: whitesmoke\">\n" +
-                "                <div className=\"media-object-section\">\n" +
-                "                    <!--<video controls width=\"300\" muted class=\"thumbnail\">\n" +
-                "                        <source th:src=\"'/saved/' + ${f.getFileName()}\" type=\"video/mp4\"/>\n" +
-                "                    </video>-->\n" +
-                "                    <video className=\"thumbnail\" width=\"300\" height=\"200\" muted controls=\"controls\">\n" +
-                "                        <source src=\"" + newContent[i].fullPath + "  \" type=\"video/mp4\"/>\n" +
-                "                    </video>\n" +
-                "                </div>\n" +
-                "                <div className=\"media-object-section\" style=\"position: relative\">\n" +
-                "                    <div className=\"medium-12\">\n" +
-                "                        <ul className=\"spisok\">\n" +
-                "                            <li style=\"font-size: 14px\">Имя: <span th:text=\"${f.getFileName()}\"></span></li>\n" +
-                "                            <li style=\"font-size: 14px\">Дата: <span th:text=\"${f.getPlacedAt()}\"></span></li>\n" +
-                "                            <!-- исправить на дату записи видео в базе -->\n" +
-                "                            <li style=\"font-size: 14px\">Размер файла: <span th:text=\"${f.getFileSize()}\"></span></li>\n" +
-                "                            <!-- Размер сделать в гигабайтах -->\n" +
-                "                        </ul>\n" +
-                "                    </div>\n" +
-                "                    <div className=\"small-12 row button-group\" style=\"position: absolute; bottom: 10px\">\n" +
-                "                        <div className=\"small-6 column\">\n" +
-                "                            <form th:method=\"POST\" th:action=\"@{/admin/files/get/photo/{id}(id=${f.getId()})}\"\n" +
-                "                                  th:object=\"${f}\">\n" +
-                "                                <input type=\"submit\" value=\"Фото\" className=\"submit small button disabled\"\n" +
-                "                                       th:if=\"${f.getImages().size()} == 0\">\n" +
-                "                                    <input type=\"submit\" value=\"Фото\" className=\"submit small button\"\n" +
-                "                                           th:if=\"${f.getImages().size()} != 0\">\n" +
-                "                            </form>\n" +
-                "                        </div>\n" +
-                "                        <div className=\"small-6 column\">\n" +
-                "                            <form th:method=\"POST\" th:action=\"@{/admin/files/delete/{id}(id=${f.getId()})}\">\n" +
-                "                                <input className=\"alert small button\" type=\"submit\" value=\"Удалить\">\n" +
-                "                            </form>\n" +
-                "                        </div>\n" +
-                "                    </div>\n" +
-                "                </div>\n" +
-                "            </div>"
-            )
-        }
-    }*/
 }
 
 stompClient.activate();
