@@ -64,6 +64,7 @@
     </head>
 
     <body>
+        <input type="hidden" name="currentPage" id="currentPage" th:value="${currentPage}">
         <!-- Start Top Bar -->
         <div class="top-bar">
             <div class="row">
@@ -91,6 +92,7 @@
             <div class="medium-6 columns">
                 <div class="download medium-12 columns" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke"> <!-- style="border: solid 1px gray" -->
                     <form id="uploadForm" th:method="POST" th:action="@{/admin/files/add}" enctype="multipart/form-data">
+                        <input type="hidden" name="cpAdd" id="cpAdd" th:value="${currentPage}">
                         <div class="medium-12 columns">
                             <div class="medium-12 row">
                                 <div class="medium-10 column">
@@ -177,9 +179,11 @@
                                     </form>
                                 </div>
                                 <div class="small-6 column">
-                                    <form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
+                                    <!--<form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
+                                        <input type="hidden" name="cpDel" id="cpDel" th:value="${currentPage}">
                                         <input class="alert small button" type="submit" value="Удалить">
-                                    </form>
+                                    </form>-->
+                                    <button th:id="${f.getId()}" th:name="${currentPage}" class="alert small button" onclick="deleteElement(this.id,this.name)">Удалить</button>
                                 </div>
                             </div>
                         </div>

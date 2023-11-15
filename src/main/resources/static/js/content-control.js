@@ -19,33 +19,85 @@ stompClient.onStompError = (frame) => {
 function setupContent(content){
     let json = content;
     const message = JSON.parse(json);
+
+    let totalPages = message.totalPages
+    let currentPage = message.currentPage
+    let oldPage = message.oldPage
+    let onAdded = message.onAdd
+    let onDeleted = message.onDelete
+
+    console.log(oldPage + ' ' + currentPage)
+
+    if(oldPage !== currentPage){
+        window.location.replace('/admin/files/' + currentPage)
+    }else{
+        if(onDeleted !== null){
+            document.getElementById('element_' + onDeleted.id).remove()
+        }
+        if(onAdded !== null){
+            $('#array-structure').prepend(
+                '                     <div class="media-object stack-for-small" id="element_' + onAdded.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
+                '                        <div class="media-object-section medium-6">\n' +
+                '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
+                '                                <source src="' + onAdded.fullPath + '" type="video/mp4" />\n' +
+                '                            </video>\n' +
+                '                        </div>\n' +
+                '                        <div class="media-object-section" style="position: relative">\n' +
+                '                            <div class="medium-12">\n' +
+                '                                <ul class="spisok">\n' +
+                '                                    <li style="font-size: 14px">Имя: <span>' + onAdded.fileName + '</span></li>\n' +
+                '                                    <li style="font-size: 14px">Дата: <span>' + onAdded.placedAt + '</span></li> <!-- исправить на дату записи видео в базе -->\n' +
+                '                                    <li style="font-size: 14px">Размер файла: <span>' + onAdded.fileSize + '</span></li> <!-- Размер сделать в гигабайтах -->\n' +
+                '                                </ul>\n' +
+                '                            </div>\n' +
+                '                            <div class="small-12 row button-group" style="position: absolute; bottom: 10px">\n' +
+                '                                <div class="small-6 column">\n' +
+                '                                    <form method="POST" action="/admin/files/get/photo/' + onAdded.id + '">\n' +
+                '                                        <input type="submit" value="Фото" class="submit small button disabled">\n' +
+                '                                    </form>\n' +
+                '                                </div>\n' +
+                '                                <div class="small-6 column">\n' +
+                '                                    <form method="POST" action="/admin/files/delete/' + onAdded.id + '">\n' +
+                //'                                        <input type="hidden" name="' + [[${_csrf.parameterName}]] + '" value="' + [[${_csrf.token}]] + '">' +
+                '                                        <input class="alert small button" type="submit" value="Удалить">\n' +
+                '                                    </form>\n' +
+                '                                </div>\n' +
+                '                            </div>\n' +
+                '                        </div>\n' +
+                '                    </div>'
+            )
+        }
+    }
+
+    /*let json = content;
+    const message = JSON.parse(json);
     let status = message.status;
-    let card = message.content;
+    let onAdded = message.content;
 
     if(status === 1){ // added
         $('#array-structure').prepend(
-            '                     <div class="media-object stack-for-small" id="element_' + card.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
+            '                     <div class="media-object stack-for-small" id="element_' + onAdded.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
             '                        <div class="media-object-section medium-6">\n' +
             '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
-            '                                <source src="' + card.fullPath + '" type="video/mp4" />\n' +
+            '                                <source src="' + onAdded.fullPath + '" type="video/mp4" />\n' +
             '                            </video>\n' +
             '                        </div>\n' +
             '                        <div class="media-object-section" style="position: relative">\n' +
             '                            <div class="medium-12">\n' +
             '                                <ul class="spisok">\n' +
-            '                                    <li style="font-size: 14px">Имя: <span>' + card.fileName + '</span></li>\n' +
-            '                                    <li style="font-size: 14px">Дата: <span>' + card.placedAt + '</span></li> <!-- исправить на дату записи видео в базе -->\n' +
-            '                                    <li style="font-size: 14px">Размер файла: <span>' + card.fileSize + '</span></li> <!-- Размер сделать в гигабайтах -->\n' +
+            '                                    <li style="font-size: 14px">Имя: <span>' + onAdded.fileName + '</span></li>\n' +
+            '                                    <li style="font-size: 14px">Дата: <span>' + onAdded.placedAt + '</span></li> <!-- исправить на дату записи видео в базе -->\n' +
+            '                                    <li style="font-size: 14px">Размер файла: <span>' + onAdded.fileSize + '</span></li> <!-- Размер сделать в гигабайтах -->\n' +
             '                                </ul>\n' +
             '                            </div>\n' +
             '                            <div class="small-12 row button-group" style="position: absolute; bottom: 10px">\n' +
             '                                <div class="small-6 column">\n' +
-            '                                    <form method="POST" action="/admin/files/get/photo/' + card.id + '">\n' +
+            '                                    <form method="POST" action="/admin/files/get/photo/' + onAdded.id + '">\n' +
             '                                        <input type="submit" value="Фото" class="submit small button disabled">\n' +
             '                                    </form>\n' +
             '                                </div>\n' +
             '                                <div class="small-6 column">\n' +
-            '                                    <form method="POST" action="/admin/files/delete/' + card.id + '">\n' +
+            '                                    <form method="POST" action="/admin/files/delete/' + onAdded.id + '">\n' +
           //'                                        <input type="hidden" name="' + [[${_csrf.parameterName}]] + '" value="' + [[${_csrf.token}]] + '">' +
             '                                        <input class="alert small button" type="submit" value="Удалить">\n' +
             '                                    </form>\n' +
@@ -55,11 +107,23 @@ function setupContent(content){
             '                    </div>'
         )
     }else if(status === 2){ // deleted
-        document.getElementById('element_' + card.id).remove()
-    }
+        document.getElementById('element_' + onAdded.id).remove()
+    }*/
 }
 
 stompClient.activate();
+
+function deleteElement(id,page){
+    console.log(id + ' ' + page)
+    stompClient.publish({
+        destination: "/app/delete-element",
+        body: JSON.stringify({'id': id,'page':page})
+    })
+}
+
+function addElement(){
+
+}
 
 /*setInterval(update,1000)
 

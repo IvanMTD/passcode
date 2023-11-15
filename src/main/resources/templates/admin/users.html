@@ -74,6 +74,7 @@
                                     </div>
                                     <div class="column small-5">
                                         <form th:method="POST" th:action="@{/admin/users/delete/{id}(id=${p.getId()})}">
+                                            <input type="hidden" name="cpDelete" id="cpDelete" th:value="${currentPage}">
                                             <input class="alert small button" type="submit" value="Удалить">
                                         </form>
                                     </div>
@@ -87,6 +88,7 @@
             <div class="medium-6 columns">
                 <h4>Добавить нового пользователя</h4>
                 <form th:method="POST" th:action="@{/admin/users/add}" th:object="${person}">
+                    <input type="hidden" name="cpAdd" id="cpAdd" th:value="${currentPage}">
                     <label>Имя<input type="text" th:field="*{firstName}"></label>
                     <div class="alert" th:if="${#fields.hasErrors('firstName')}" style="border: solid 1px red; background: pink">
                         <p th:errors="*{firstName}" style="color: red; font-size: small; text-align: left; vertical-align: middle; margin: auto; padding: 5px"></p>

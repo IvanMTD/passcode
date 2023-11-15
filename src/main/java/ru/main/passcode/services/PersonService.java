@@ -43,7 +43,7 @@ public class PersonService implements UserDetailsService {
     }
 
     public List<PersonDTO> findAllByPageable(Pageable pageable) {
-        List<Person> persons = personRepository.findAllByOrderByPlacedAtDesc(pageable);
+        List<Person> persons = personRepository.findAllByOrderByIdDesc(pageable);
         List<PersonDTO> newPersonList = new ArrayList<>();
         for(Person person : persons){
             PersonDTO personDTO = new PersonDTO();

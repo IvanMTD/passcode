@@ -27,15 +27,16 @@ public class ContentService {
     public Content save(MultipartFile file){
         Content content = new Content();
         Content saved = new Content();
+
         String fileName = file.getOriginalFilename();
         String type = fileName.substring(fileName.length()-3);
-        Content c = contentRepository.findFirstByOrderByIdDesc();
-        String newName;
-        if(c != null) {
-            newName = "uid" + (c.getId() + 1) + "." + type;
-        }else{
-            newName = "uid" + 1 + "." + type;
+        String randomWord = "";
+        for(int i=0; i<10; i++){
+            char ch = (char) Math.round(65 + (Math.random() * 25.0f));
+            randomWord = randomWord + ch;
         }
+        System.out.println(randomWord);
+        String newName = "UID-" + randomWord + "." + type;
         content.setFileName(newName);
         content.setFileSize(file.getSize());
         content.setHashData(String.valueOf(file.hashCode()));
