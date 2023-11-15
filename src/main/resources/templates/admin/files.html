@@ -213,7 +213,7 @@
                     <div class="overlay" id="contenedor1">
                         <div class="overlay_container">
                             <a href="#close">
-                                <img th:src="${images.get(0)}"/>
+                                <img id="mainImg2" th:src="${images.get(0)}"/>
                             </a>
                         </div>
                     </div>
@@ -226,23 +226,26 @@
                 <div class="row small-up-4">
                     <div class="column" th:each="image,stat : ${images}">
                         <!-- th:src="'data:image/png;base64,' + ${image}" -->
-                        <img class="thumbnail" th:id="'img' + ${stat.index}" th:src="${image}" width="250" height="200" onclick="replace(this.id)">
+                        <img class="thumbnail" th:id="'img' + ${stat.index}" th:src="${image}" width="250" height="200" onclick="replaceImage(this.id)">
                     </div>
                 </div>
                 <div>
                     <button type="button" class="submit expanded button" th:if="${images.size()} != 0">Отправить в надзорный орган</button>
                 </div>
-                <script th:inline="javascript">
-                    function replace(id) {
-                        console.log(id)
-                        let currentImageSrc = document.getElementById(id).getAttribute('src');
-                        let mainImage = document.getElementById('mainImg');
-                        mainImage.setAttribute('src',currentImageSrc)
-                     }
-                </script>
                 <!--<a th:href="@{/admin/files/resort/{num}(num = 1)}"></a>-->
             </div>
         </div>
+
+        <script th:inline="javascript">
+            function replaceImage(id) {
+                console.log(id)
+                let currentImageSrc = document.getElementById(id).getAttribute('src');
+                let mainImage = document.getElementById('mainImg');
+                let mainImage2 = document.getElementById('mainImg2');
+                mainImage.setAttribute('src',currentImageSrc)
+                mainImage2.setAttribute('src',currentImageSrc)
+            }
+        </script>
 
         <div class="column row">
             <nav aria-label="Pagination">
