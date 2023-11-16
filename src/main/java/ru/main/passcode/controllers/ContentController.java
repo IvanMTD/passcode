@@ -15,10 +15,12 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -51,6 +50,8 @@ public class ContentController {
     private final ContentService contentService;
     private int itemOnPage = 5;
     private int totalPages;
+
+    private Map<Long,Integer> idSize = new HashMap<>();
 
 
     @GetMapping("/files/{page}")
@@ -78,6 +79,7 @@ public class ContentController {
         //ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         //this.template.convertAndSend("/send/content",ow.writeValueAsString(new Message(Message.DELETED, contentService.findByIdContentDTO(id))));
         contentService.delete(id);
+        idSize.put(id,0);
         prepareTotalPages();
         if(totalPages < (page + 1)){
             page = page - 1;
@@ -127,6 +129,7 @@ public class ContentController {
     @MessageMapping("/delete-element")
     @SendTo("/send/content")
     public String deleteElement(RequestMessage requestMessage) throws JsonProcessingException {
+        System.out.println("DELETE ID: " + requestMessage.getId() + " | page " + requestMessage.page);
         ContentDTO onDelete = contentService.findByIdContentDTO(requestMessage.getId());
         List<ContentDTO> beforeList = contentService.findAllByPageable(PageRequest.of(requestMessage.getPage(),itemOnPage));
         contentService.delete(requestMessage.getId());
@@ -159,11 +162,29 @@ public class ContentController {
         int currentPage = Integer.parseInt(page.substring(1,page.length()-1)) - 1;
         this.template.convertAndSend("/send/server", ow.writeValueAsString(new DataMessage(currentPage, totalPages, contentService.findAllByPageable(PageRequest.of(currentPage, itemOnPage)))));
     }
-
-    /*@Scheduled(fixedDelay = 1000)
-    public void monitoring() {
-
-    }*/
+    @Scheduled(fixedDelay = 1000)
+    public void monitoring() throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        File directory = new File("./src/main/resources/static/result");
+        if(directory.isDirectory()){
+            File[]directories = directory.listFiles();
+            for(File dir : directories){
+                if(dir.exists()){
+                    long id = Long.parseLong(dir.getName());
+                    int size = dir.listFiles().length;
+                    if(!idSize.containsKey(id)){
+                        //
+                        idSize.put(id,size);
+                    }else{
+                        if(idSize.get(id) == 0){
+                            //
+                            idSize.remove(id);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private void prepareTotalPages(){
         int fileCount = contentService.findAll().size();
@@ -211,13 +232,18 @@ public class ContentController {
         private ContentDTO onDelete;
 
         public ResponseMessage(int totalPage, int currentPage, int oldPage, ContentDTO onAdd, ContentDTO onDelete, int status) {
-            System.out.println("current: " + currentPage + " old: " + oldPage);
             this.totalPage = totalPage;
             this.currentPage = currentPage;
             this.oldPage = oldPage;
             this.onAdd = onAdd;
             this.onDelete = onDelete;
             this.status = status;
+
+            System.out.println(
+                    "TOTAL: " + this.totalPage +"\n" +
+                    "CURRENT: " + this.currentPage +"\n" +
+                    "OLD: " + this.oldPage +"\n"
+            );
         }
     }
 

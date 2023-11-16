@@ -173,10 +173,12 @@
                             </div>
                             <div class="small-12 row button-group" style="position: absolute; bottom: 10px">
                                 <div class="small-6 column">
-                                    <form th:method="POST" th:action="@{/admin/files/get/photo/{id}(id=${f.getId()})}">
-                                        <input type="submit" value="Фото" class="submit small button disabled" th:if="${f.getImages().size()} == 0">
-                                        <input type="submit" value="Фото" class="submit small button" th:if="${f.getImages().size()} != 0">
-                                    </form>
+                                    <button th:name="${f.getId()}" class="submit small button disabled" onclick="test(this.name)">Фото</button>
+                                    <script>
+                                        function test(id){
+                                            console.log('id: ' + id)
+                                        }
+                                    </script>
                                 </div>
                                 <div class="small-6 column">
                                     <!--<form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
@@ -253,17 +255,19 @@
 
         <div class="column row">
             <nav aria-label="Pagination">
-                <ul class="pagination text-center" role="navigation" aria-label="Pagination">
-                    <li class="disabled" th:if="${currentPage} == 0">Previous <span class="show-for-sr">page</span></li>
-                    <li th:if="${currentPage} >= 1"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
+                <div id="navbar">
+                    <ul class="pagination text-center" role="navigation" aria-label="Pagination">
+                        <li class="disabled" th:if="${currentPage} == 0">Previous <span class="show-for-sr">page</span></li>
+                        <li th:if="${currentPage} >= 1"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
 
-                    <li th:if="${currentPage} != 0"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}" th:text="${currentPage}">num</a></li>
-                    <li class="current"><span class="show-for-sr">You're on page</span><span id="pageNum" th:text="${currentPage + 1}"> num</span></li>
-                    <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" th:text="${currentPage + 2}">num</a></li>
+                        <li th:if="${currentPage} != 0"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}" th:text="${currentPage}">num</a></li>
+                        <li class="current"><span class="show-for-sr">You're on page</span><span id="pageNum" th:text="${currentPage + 1}"> num</span></li>
+                        <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" th:text="${currentPage + 2}">num</a></li>
 
-                    <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
-                    <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" aria-label="Next page">Next<span class="show-for-sr">page</span></a></li>
-                </ul>
+                        <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
+                        <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" aria-label="Next page">Next<span class="show-for-sr">page</span></a></li>
+                    </ul>
+                </div>
             </nav>
         </div>
 
