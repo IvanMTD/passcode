@@ -108,7 +108,7 @@
                                 <input type="file" accept="video/*" name="file" id="file" style="display:none" onchange="document.getElementById('pathField').setAttribute('value',document.getElementById('file').value)">
                             </div>-->
                             <div class="medium-12 row">
-                                <input  class="button expanded" type="submit" value="Загрузить">
+                                <input class="button expanded" type="submit" value="Загрузить">
                             </div>
                             <div class="medium-12 row">
                                 <progress class="progress" id="progressBar" value="0" max="100" style="width: 100%"></progress>
@@ -145,7 +145,7 @@
 
                         function loadHandler(event) {
                             progressBar.value = 0
-                            window.location.reload();
+                            //window.location.reload();
                         }
                     </script>
                 </div>
@@ -258,7 +258,7 @@
                     <li th:if="${currentPage} >= 1"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
 
                     <li th:if="${currentPage} != 0"><a th:href="@{/admin/files/{page}(page=${currentPage - 1})}" th:text="${currentPage}">num</a></li>
-                    <li class="current"><span class="show-for-sr">You're on page</span><span th:text="${currentPage + 1}"> num</span></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span><span id="pageNum" th:text="${currentPage + 1}"> num</span></li>
                     <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/files/{page}(page=${currentPage + 1})}" th:text="${currentPage + 2}">num</a></li>
 
                     <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>

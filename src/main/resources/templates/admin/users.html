@@ -53,6 +53,14 @@
 
         <br>
 
+        <!--<button type="button" id="superButton" onclick="toDo()">Button</button>
+        <script>
+            function toDo(){
+                let id = document.getElementById('currentPageId').textContent
+                console.log(id)
+            }
+        </script>-->
+
         <!-- You can now combine a row and column if you just need a 12 column row -->
         <div class="row">
             <div class="medium-6 columns">
@@ -133,7 +141,7 @@
                     <li th:if="${currentPage} >= 1"><a th:href="@{/admin/users/{page}(page=${currentPage - 1})}">Previous</a><span class="show-for-sr">page</span></li>
 
                     <li th:if="${currentPage} != 0"><a th:href="@{/admin/users/{page}(page=${currentPage - 1})}" th:text="${currentPage}">num</a></li>
-                    <li class="current"><span class="show-for-sr">You're on page</span><span th:text="${currentPage + 1}"> num</span></li>
+                    <li class="current"><span class="show-for-sr">You're on page</span><span id="currentPageId" th:text="${currentPage + 1}"> num</span></li>
                     <li th:if="${currentPage + 1} != ${totalPages}"><a th:href="@{/admin/users/{page}(page=${currentPage + 1})}" th:text="${currentPage + 2}">num</a></li>
 
                     <li class="disabled" th:if="${currentPage+1} == ${totalPages}">Next<span class="show-for-sr">page</span></li>
