@@ -1,4 +1,5 @@
 FROM amazoncorretto:17.0.6
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY . .
+RUN ./mvnw dependency:go-offline
+RUN ./mvnw clean install
 ENTRYPOINT ["java","-jar","/app.jar"]
