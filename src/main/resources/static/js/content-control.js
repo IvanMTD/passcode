@@ -11,6 +11,9 @@ stompClient.onConnect = (frame) => {
     stompClient.subscribe('/send/photo/check', (message) => {
         photoButtonUpdate(message.body);
     });
+    stompClient.subscribe('/send/photo', (message) => {
+        photoUpdate(message.body);
+    });
 };
 
 stompClient.onWebSocketError = (error) => {
@@ -22,7 +25,35 @@ stompClient.onStompError = (frame) => {
     console.error('Additional details: ' + frame.body);
 };
 
+stompClient.activate();
+
 function photoButtonUpdate(message){
+    console.log(message)
+    const m = JSON.parse(message);
+    let status = m.status;
+    let id = m.id;
+    if(status === 1){
+        $('#photo_' + id).html('')
+        $('#photo_' + id).append(
+            '<button name="' + id + '" class="submit small button" onclick="getPhotos(' + id + ')">Фото</button>'
+        )
+    }else{
+        $('#photo_' + id).html('')
+        $('#photo_' + id).append(
+            '<button name="' + id + '" class="submit small button disabled">Фото</button>'
+        )
+    }
+}
+
+function getPhotos(id){
+    console.log(id);
+    stompClient.publish({
+        destination: "/app/get/photos",
+        body: JSON.stringify(id)
+    })
+}
+
+function photoUpdate(message){
     console.log(message)
 }
 
@@ -42,13 +73,15 @@ function readMessage(message){
                 $('#array-structure').append(
                     '                     <div class="media-object stack-for-small" id="element_' + onAdded.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
                     '                        <div class="media-object-section medium-6">\n' +
-                    '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
+/*                    '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
                     '                                <source src="' + onAdded.fullPath + '" type="video/mp4" />\n' +
-                    '                            </video>\n' +
+                    '                            </video>\n' +*/
+                    '                            <img class="thumbnail" src="https://placehold.it/200x150">' +
                     '                        </div>\n' +
                     '                        <div class="media-object-section" style="position: relative">\n' +
                     '                            <div class="medium-12">\n' +
                     '                                <ul class="spisok">\n' +
+                    '                                    <li style="font-size: 14px">ID: <span>' + onAdded.id + '</span></li>\n' +
                     '                                    <li style="font-size: 14px">Имя: <span>' + onAdded.fileName + '</span></li>\n' +
                     '                                    <li style="font-size: 14px">Дата: <span>' + onAdded.placedAt + '</span></li> <!-- исправить на дату записи видео в базе -->\n' +
                     '                                    <li style="font-size: 14px">Размер файла: <span>' + onAdded.fileSize + '</span></li> <!-- Размер сделать в гигабайтах -->\n' +
@@ -153,13 +186,15 @@ function setupContent(content){
                 $('#array-structure').prepend(
                     '                     <div class="media-object stack-for-small" id="element_' + onAdded.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
                     '                        <div class="media-object-section medium-6">\n' +
-                    '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
+/*                    '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
                     '                                <source src="' + onAdded.fullPath + '" type="video/mp4" />\n' +
-                    '                            </video>\n' +
+                    '                            </video>\n' +*/
+                    '                            <img class="thumbnail" src="https://placehold.it/200x150">' +
                     '                        </div>\n' +
                     '                        <div class="media-object-section" style="position: relative">\n' +
                     '                            <div class="medium-12">\n' +
                     '                                <ul class="spisok">\n' +
+                    '                                    <li style="font-size: 14px">ID: <span>' + onAdded.id + '</span></li>\n' +
                     '                                    <li style="font-size: 14px">Имя: <span>' + onAdded.fileName + '</span></li>\n' +
                     '                                    <li style="font-size: 14px">Дата: <span>' + onAdded.placedAt + '</span></li> <!-- исправить на дату записи видео в базе -->\n' +
                     '                                    <li style="font-size: 14px">Размер файла: <span>' + onAdded.fileSize + '</span></li> <!-- Размер сделать в гигабайтах -->\n' +
@@ -225,8 +260,6 @@ function setupContent(content){
         }
     }
 }
-
-stompClient.activate();
 
 function deleteElement(id,page){
     console.log(id + ' ' + page)

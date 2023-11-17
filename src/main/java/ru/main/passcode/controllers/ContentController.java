@@ -172,13 +172,14 @@ public class ContentController {
                 if(dir.exists()){
                     long id = Long.parseLong(dir.getName());
                     int size = dir.listFiles().length;
-                    if(!idSize.containsKey(id)){
-                        //
+                    if(!idSize.containsKey(id)){ // если это новый элемент включаем
                         idSize.put(id,size);
-                    }else{
-                        if(idSize.get(id) == 0){
-                            //
+                        this.template.convertAndSend("/send/photo/check", ow.writeValueAsString(new DefaultMessage(1,id))); // 1 - включить
+                    }else{ // если элемент не имеет больше файлов удаляем и выключаем
+                        if(idSize.get(id) == 0 || size == 0){
+                            System.out.println(idSize.get(id));
                             idSize.remove(id);
+                            this.template.convertAndSend("/send/photo/check", ow.writeValueAsString(new DefaultMessage(2,id))); // 1 - выключить
                         }
                     }
                 }
@@ -268,6 +269,17 @@ public class ContentController {
             this.currentPage = currentPage;
             this.totalPages = totalPages;
             this.content = content;
+        }
+    }
+
+    @Data
+    static class DefaultMessage{
+        private int status;
+        private long id;
+
+        public DefaultMessage(int status, long id) {
+            this.status = status;
+            this.id = id;
         }
     }
 }

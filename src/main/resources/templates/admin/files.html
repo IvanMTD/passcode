@@ -159,13 +159,15 @@
                             <!--<video controls width="300" muted class="thumbnail">
                                 <source th:src="'/saved/' + ${f.getFileName()}" type="video/mp4"/>
                             </video>-->
-                            <video class="thumbnail" width="300" height="200"  muted controls="controls">
+                            <img class="thumbnail" src="https://placehold.it/200x150">
+                            <!--<video class="thumbnail" width="300" height="200"  muted controls="controls">
                                 <source th:src="${f.getFullPath()}" type="video/mp4" />
-                            </video>
+                            </video>-->
                         </div>
                         <div class="media-object-section" style="position: relative">
                             <div class="medium-12">
                                 <ul class="spisok">
+                                    <li style="font-size: 14px">ID: <span th:text="${f.getId()}"></span></li>
                                     <li style="font-size: 14px">Имя: <span th:text="${f.getFileName()}"></span></li>
                                     <li style="font-size: 14px">Дата: <span th:text="${f.getPlacedAt()}"></span></li> <!-- исправить на дату записи видео в базе -->
                                     <li style="font-size: 14px">Размер файла: <span th:text="${f.getFileSize()}"></span></li> <!-- Размер сделать в гигабайтах -->
@@ -173,12 +175,10 @@
                             </div>
                             <div class="small-12 row button-group" style="position: absolute; bottom: 10px">
                                 <div class="small-6 column">
-                                    <button th:name="${f.getId()}" class="submit small button disabled" onclick="test(this.name)">Фото</button>
-                                    <script>
-                                        function test(id){
-                                            console.log('id: ' + id)
-                                        }
-                                    </script>
+                                    <div th:id="'photo_' + ${f.getId()}">
+                                        <button class="submit small button disabled" th:if="${f.getImages().size()} == 0">Фото</button>
+                                        <button th:name="${f.getId()}" class="submit small button" onclick="test(this.name)" th:if="${f.getImages().size()} != 0">Фото</button>
+                                    </div>
                                 </div>
                                 <div class="small-6 column">
                                     <!--<form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
@@ -198,10 +198,10 @@
             <!-- Сложный элемент -->
             <div class="medium-6 columns">
                 <!-- КНОПКА АВТООБНОВЛЕНИЯ -->
-                <div class="row">
+                <!--<div class="row">
                     <div class="columns large-2">
                         <div class="switch">
-                            <!--<input class="switch-input"  type="checkbox" id="exampleCheckedDisabledSwitch" name="exampleCheckedDisabledSwitch">-->
+                            &lt;!&ndash;<input class="switch-input"  type="checkbox" id="exampleCheckedDisabledSwitch" name="exampleCheckedDisabledSwitch">&ndash;&gt;
                             <input class="switch-input" type="checkbox" onclick="toggleAutoRefresh(this);" id="reloadCB" name="reloadCB">
                             <label class="switch-paddle" for="reloadCB">
                                 <span class="show-for-sr">Can't Touch This Checked</span>
@@ -209,7 +209,7 @@
                         </div>
                     </div>
                     <div class="columns large-10">автообновление страницы</div>
-                </div>
+                </div>-->
 
                 <h4>Факты несанкционированной торговли</h4>
 
