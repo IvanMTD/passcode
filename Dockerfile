@@ -10,4 +10,4 @@ RUN mvn clean package -DskipTests
 FROM amazoncorretto:17.0.6
 WORKDIR /app
 COPY --from=1 /app/target/passcode-1.0.1-SNAPSHOT.jar /app
-CMD ["java -jar passcode-1.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java -jar passcode-1.0.1-SNAPSHOT.jar"]
