@@ -5,7 +5,7 @@ RUN git clone https://github.com/IvanMTD/passcode.git
 FROM maven:3.9.5-amazoncorretto-17
 WORKDIR /app
 COPY --from=0 /app/passcode /app
-RUN mvn install
+RUN mvn clean package
 
 FROM amazoncorretto:17.0.6
 WORKDIR /app
