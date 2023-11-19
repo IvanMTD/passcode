@@ -1,0 +1,3 @@
+FROM postgres:16
+COPY init-scripts/data.sql /docker-entrypoint-initdb.d/data.sql
+EXPOSE 5432
