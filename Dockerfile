@@ -4,7 +4,7 @@ RUN git clone https://github.com/IvanMTD/passcode.git
 
 FROM maven:openjdk as build
 WORKDIR /app
-COPY --from=0 /app/passcode /app
+COPY --from=clone /app/passcode /app
 RUN mvn clean package -DskipTests
 
 FROM openjdk
