@@ -12,5 +12,5 @@ EXPOSE 8080
 EXPOSE 5432
 EXPOSE 443
 WORKDIR /app
-COPY --from=1 /app/target/passcode-1.0.1-SNAPSHOT.jar /app
-ENTRYPOINT ["java","-jar","/passcode-1.0.1-SNAPSHOT.jar"]
+COPY --from=1 /app/target/passcode-1.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
