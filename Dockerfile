@@ -16,5 +16,5 @@ RUN mvn clean package
 
 FROM amazoncorretto:17.0.6
 WORKDIR /app
-COPY  --from=1 /app/target/passcode-1.0.1-SNAPSHOT.jar /app
+COPY --from=1 /app/target/passcode-1.0.1-SNAPSHOT.jar /app
 ENTRYPOINT ["java","-jar","/passcode-1.0.1-SNAPSHOT.jar"]
