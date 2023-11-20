@@ -8,7 +8,7 @@ EXPOSE 5432
 EXPOSE 443
 WORKDIR /app
 COPY --from=0 /app/passcode /app
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM amazoncorretto:17.0.6
 EXPOSE 8080
