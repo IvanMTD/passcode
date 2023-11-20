@@ -7,7 +7,7 @@ WORKDIR /app
 COPY --from=clone /app/passcode /app
 RUN mvn clean package -DskipTests
 
-FROM openjdk:17-jre-alpine
+FROM openjdk:17-oracle
 EXPOSE 8080
 EXPOSE 443
 EXPOSE 5432
