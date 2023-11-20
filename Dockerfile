@@ -2,7 +2,7 @@ FROM alpine/git as clone
 WORKDIR /app
 RUN git clone https://github.com/IvanMTD/passcode.git
 
-FROM maven-3.9.2-openjdk-17 as build 
+FROM maven
 WORKDIR /app
 COPY --from=clone /app/spring-petclinic /app 
 RUN mvn clean package -DskipTests
