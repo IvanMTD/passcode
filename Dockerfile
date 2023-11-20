@@ -1,10 +1,3 @@
-FROM maven:3.9.5-amazoncorretto-17
-EXPOSE 8080
-RUN mvn clean package
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
-
 FROM alpine/git
 WORKDIR /app
 RUN git clone https://github.com/IvanMTD/passcode.git
