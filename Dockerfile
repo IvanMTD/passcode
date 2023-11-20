@@ -2,7 +2,7 @@ FROM alpine/git as clone
 WORKDIR /app
 RUN git clone https://github.com/IvanMTD/passcode.git
 
-FROM maven:3.9.5-amazoncorretto-17-alpine as build
+FROM maven:3.9.5-amazoncorretto-17 as build
 WORKDIR /app
 COPY --from=clone /app/passcode /app
 RUN mvn clean package -DskipTests
