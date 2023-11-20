@@ -7,7 +7,7 @@ WORKDIR /app
 COPY --from=clone /app/passcode /app
 RUN mvn clean package -DskipTests
 
-FROM amazoncorretto-17-alpine
+FROM openjdk:17-jre-alpine
 EXPOSE 8080
 EXPOSE 443
 EXPOSE 5432
