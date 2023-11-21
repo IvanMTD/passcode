@@ -159,7 +159,6 @@ public class ContentController {
     }
 
     @MessageMapping("/answer")
-    //@SendTo("/send/server")
     public void clientAnswer(@NonNull String page) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         int currentPage = Integer.parseInt(page.substring(1,page.length()-1)) - 1;

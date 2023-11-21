@@ -177,13 +177,13 @@
                                 <div class="small-6 column">
                                     <div th:id="'photo_' + ${f.getId()}">
                                         <button class="submit small button disabled" th:if="${f.getImages().size()} == 0">Фото</button>
-                                        <button th:name="${iter.index}" class="submit small button" onclick="showPhotos(this.name)" th:if="${f.getImages().size()} != 0">Фото</button>
+                                        <button th:name="${f.id}" class="submit small button" onclick="showPhotos(this.name)" th:if="${f.getImages().size()} != 0">Фото</button>
                                     </div>
                                 </div>
                                 <script th:inline="javascript">
-                                    function showPhotos(index){
+                                    function showPhotos(id){
                                         let content = [[${fileInform}]]
-                                        setupPhotos(content[index])
+                                        setupPhotos(content,id)
                                     }
                                 </script>
                                 <div class="small-6 column">
