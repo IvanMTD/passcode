@@ -154,7 +154,7 @@
 
                 <div id="array-structure">
                     <!-- ELEMENT START -->
-                    <div class="media-object stack-for-small" th:each="f : ${fileInform}" th:id="'element_' + ${f.getId()}" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">
+                    <div class="media-object stack-for-small" th:each="f,iter : ${fileInform}" th:id="'element_' + ${f.getId()}" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">
                         <div class="media-object-section medium-6">
                             <!--<video controls width="300" muted class="thumbnail">
                                 <source th:src="'/saved/' + ${f.getFileName()}" type="video/mp4"/>
@@ -177,9 +177,15 @@
                                 <div class="small-6 column">
                                     <div th:id="'photo_' + ${f.getId()}">
                                         <button class="submit small button disabled" th:if="${f.getImages().size()} == 0">Фото</button>
-                                        <button th:name="${f.getId()}" class="submit small button" onclick="test(this.name)" th:if="${f.getImages().size()} != 0">Фото</button>
+                                        <button th:name="${iter.index}" class="submit small button" onclick="showPhotos(this.name)" th:if="${f.getImages().size()} != 0">Фото</button>
                                     </div>
                                 </div>
+                                <script th:inline="javascript">
+                                    function showPhotos(index){
+                                        let content = [[${fileInform}]]
+                                        setupPhotos(content[index])
+                                    }
+                                </script>
                                 <div class="small-6 column">
                                     <!--<form th:method="POST" th:action="@{/admin/files/delete/{id}(id=${f.getId()})}">
                                         <input type="hidden" name="cpDel" id="cpDel" th:value="${currentPage}">
@@ -196,49 +202,12 @@
 
 
             <!-- Сложный элемент -->
-            <div class="medium-6 columns">
-                <!-- КНОПКА АВТООБНОВЛЕНИЯ -->
-                <!--<div class="row">
-                    <div class="columns large-2">
-                        <div class="switch">
-                            &lt;!&ndash;<input class="switch-input"  type="checkbox" id="exampleCheckedDisabledSwitch" name="exampleCheckedDisabledSwitch">&ndash;&gt;
-                            <input class="switch-input" type="checkbox" onclick="toggleAutoRefresh(this);" id="reloadCB" name="reloadCB">
-                            <label class="switch-paddle" for="reloadCB">
-                                <span class="show-for-sr">Can't Touch This Checked</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="columns large-10">автообновление страницы</div>
-                </div>-->
-
+            <div class="medium-6 columns" id="imageBlock">
                 <h4>Факты несанкционированной торговли</h4>
-
-                <img class="thumbnail" src="https://placehold.it/650x350" th:if="${images.size()} == 0">
-
-                <div class="blokimg" th:if="${images.size()} >= 1">
-                    <div class="overlay" id="contenedor1">
-                        <div class="overlay_container">
-                            <a href="#close">
-                                <img id="mainImg2" th:src="${images.get(0)}"/>
-                            </a>
-                        </div>
-                    </div>
-                    <a href="#contenedor1">
-                        <!--<img src="маленькое_изображение" id="imagenM1" />-->
-                        <img class="thumbnail" id="mainImg" th:src="${images.get(0)}" width="650px" height="350px">
-                    </a>
-                </div>
-
-                <div class="row small-up-4">
-                    <div class="column" th:each="image,stat : ${images}">
-                        <!-- th:src="'data:image/png;base64,' + ${image}" -->
-                        <img class="thumbnail" th:id="'img' + ${stat.index}" th:src="${image}" width="250" height="200" onclick="replaceImage(this.id)">
-                    </div>
-                </div>
+                <img class="thumbnail" src="https://placehold.it/650x350">
                 <div>
                     <button type="button" class="submit expanded button" th:if="${images.size()} != 0">Отправить в надзорный орган</button>
                 </div>
-                <!--<a th:href="@{/admin/files/resort/{num}(num = 1)}"></a>-->
             </div>
         </div>
 

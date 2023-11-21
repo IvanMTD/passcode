@@ -1,4 +1,5 @@
 const stompClient = new StompJs.Client({brokerURL: 'ws://localhost:8080/websocket'});
+let contentTemp;
 
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame)
@@ -29,19 +30,26 @@ stompClient.activate();
 
 function photoButtonUpdate(message){
     console.log(message)
-    const m = JSON.parse(message);
-    let status = m.status;
-    let id = m.id;
-    if(status === 1){
-        $('#photo_' + id).html('')
-        $('#photo_' + id).append(
-            '<button name="' + id + '" class="submit small button" onclick="getPhotos(' + id + ')">Фото</button>'
-        )
-    }else{
-        $('#photo_' + id).html('')
-        $('#photo_' + id).append(
-            '<button name="' + id + '" class="submit small button disabled">Фото</button>'
-        )
+    const parseMessage = JSON.parse(message)
+    let content = parseMessage.content
+    contentTemp = content;
+
+    for(let i=0; i<content.length; i++){
+        let elementId = content[i].id
+        let pageElement = document.getElementById('photo_' + elementId)
+        if(pageElement !== null){
+            if(content.images.length !== 0){
+                $('#photo_' + elementId).html('')
+                $('#photo_' + elementId).append(
+                    '<button name="' + i + '" class="submit small button" onclick="getPhotos(this.name)">Фото</button>'
+                )
+            }else{
+                $('#photo_' + elementId).html('')
+                $('#photo_' + elementId).append(
+                    '<button class="submit small button disabled">Фото</button>'
+                )
+            }
+        }
     }
 }
 
@@ -67,13 +75,14 @@ function readMessage(message){
         let content = serverInformation.content;
 
         if((page - 1) === currentPage) {
+            let num = 0
             $('#array-structure').html('');
             content.forEach((onAdded) => {
                 console.log(currentPage)
                 $('#array-structure').append(
                     '                     <div class="media-object stack-for-small" id="element_' + onAdded.id + '" style="border: solid 1px lightgray; padding: 10px; background-color: whitesmoke">\n' +
                     '                        <div class="media-object-section medium-6">\n' +
-/*                    '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
+/*                  '                            <video class="thumbnail" width="300" height="200"  muted controls="controls">\n' +
                     '                                <source src="' + onAdded.fullPath + '" type="video/mp4" />\n' +
                     '                            </video>\n' +*/
                     '                            <img class="thumbnail" src="https://placehold.it/200x150">' +
@@ -88,11 +97,9 @@ function readMessage(message){
                     '                                </ul>\n' +
                     '                            </div>\n' +
                     '                            <div class="small-12 row button-group" style="position: absolute; bottom: 10px">\n' +
-                    '                                <div class="small-6 column">\n' +
-                    '                                    <form method="POST" action="/admin/files/get/photo/' + onAdded.id + '">\n' +
-                    '                                        <input type="submit" value="Фото" class="submit small button disabled">\n' +
-                    '                                    </form>\n' +
-                    '                                </div>\n' +
+                    '                                <div id="photo_' + onAdded.id + '">' +
+                    '                                    <button class="submit small button disabled">Фото</button>' +
+                    '                                </div>' +
                     '                                <div class="small-6 column">\n' +
                     '                                    <button class="alert small button" onClick="deleteElement(' + onAdded.id + ',' + currentPage + ')">Удалить</button> ' +
                     '                                </div>\n' +
@@ -100,6 +107,19 @@ function readMessage(message){
                     '                        </div>\n' +
                     '                    </div>'
                 )
+                let images = onAdded.images
+
+                if(images.length !== 0){
+                    console.log('setup button')
+                    $('#photo_' + onAdded.id).append(
+                        '<button name="' + num + '" class="submit small button" onclick="showPhotos(this.name)">Фото</button>'
+                    )
+                }else{
+                    $('#photo_' + onAdded.id).append(
+                        '<button class="submit small button disabled">Фото</button>'
+                    )
+                }
+                num++
             })
             $('#navbar').html('')
             let cp = currentPage + 1
@@ -269,11 +289,47 @@ function deleteElement(id,page){
     })
 }
 
+function setupPhotos(content){
+    console.log(content)
+    $('#imageBlock').html('')
+    $('#imageBlock').append(
+        '<h4>Факты несанкционированной торговли</h4>' +
+        '<div class="blokimg">\n' +
+        '    <div class="overlay" id="contenedor1">\n' +
+        '        <div class="overlay_container">\n' +
+        '            <a href="#close">\n' +
+        '                <img id="mainImg2" src="' + content.images[0] + '"/>\n' +
+        '            </a>\n' +
+        '        </div>\n' +
+        '    </div>\n' +
+        '    <a href="#contenedor1">\n' +
+        '        <img class="thumbnail" id="mainImg" src="' + content.images[0] + '" width="650px" height="350px">\n' +
+        '    </a>\n' +
+        '</div>' +
+        '<div id="innerImage" class="row small-up-4">\n' +
+        '</div>'
+    )
+    let images = content.images;
+    for(let i=0; i<images.length; i++){
+        $('#innerImage').append(
+            '<div class="column">\n' +
+            '   <img class="thumbnail" id="img' + i + '" src="' + images[i] + '" width="250" height="200"\n' +
+            '       onClick="replaceImage(this.id)">\n' +
+            '</div>\n'
+        )
+    }
+    $('#imageBlock').append(
+        '<div>\n' +
+        '   <button type="button" class="submit expanded button">Отправить в надзорный орган</button>\n' +
+        '</div>'
+    )
+}
+
 /*setInterval(update,1000)
 
 function update(){
-    stompClient.publish({
+    /!*stompClient.publish({
         destination: "/app/connection"
-    });
+    });*!/
     /!*stompClient.deactivate();*!/
 }*/

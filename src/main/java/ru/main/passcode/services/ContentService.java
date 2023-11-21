@@ -59,6 +59,25 @@ public class ContentService {
         return contentRepository.findAll();
     }
 
+    public List<ContentDTO> findAllDTO(){
+        List<Content> contentList = contentRepository.findAllByOrderByIdDesc();
+        List<ContentDTO> contentDTOList = new ArrayList<>();
+        for(Content content : contentList){
+            ContentDTO contentDTO = new ContentDTO();
+            contentDTO.setId(content.getId());
+            contentDTO.setFileName(content.getFileName());
+            File file = new File("./src/main/resources/static/saved/" + content.getFileName());
+            if(file.exists()){
+                contentDTO.setFullPath(file.getPath());
+            }
+            contentDTO.setFileSize(content.getFileSize());
+            contentDTO.setPlacedAt(content.getPlacedAt());
+            contentDTO.setImages(resultService.checkResult(contentDTO.getId()));
+            contentDTOList.add(contentDTO);
+        }
+        return contentDTOList;
+    }
+
     public List<ContentDTO> findAllByPageable(Pageable pageable){
         List<Content> contentList = contentRepository.findAllByOrderByIdDesc(pageable);
         List<ContentDTO> contentDTOList = new ArrayList<>();

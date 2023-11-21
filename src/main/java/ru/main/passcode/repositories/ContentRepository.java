@@ -11,5 +11,6 @@ public interface ContentRepository extends CrudRepository<Content,Long> {
     List<Content> findAll();
     List<Content> findAllByOrderByPlacedAtDesc(Pageable pageable);
     List<Content> findAllByOrderByIdDesc(Pageable pageable);
+    List<Content> findAllByOrderByIdDesc();
     Content findFirstByOrderByIdDesc();
 }

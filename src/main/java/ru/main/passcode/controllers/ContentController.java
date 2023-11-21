@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -39,7 +40,10 @@ import java.nio.file.Files;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
+@Slf4j
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -51,7 +55,7 @@ public class ContentController {
     private int itemOnPage = 5;
     private int totalPages;
 
-    private Map<Long,Integer> idSize = new HashMap<>();
+    private long checkSum = 0L;
 
 
     @GetMapping("/files/{page}")
@@ -79,7 +83,6 @@ public class ContentController {
         //ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         //this.template.convertAndSend("/send/content",ow.writeValueAsString(new Message(Message.DELETED, contentService.findByIdContentDTO(id))));
         contentService.delete(id);
-        idSize.put(id,0);
         prepareTotalPages();
         if(totalPages < (page + 1)){
             page = page - 1;
@@ -168,21 +171,16 @@ public class ContentController {
         File directory = new File("./src/main/resources/static/result");
         if(directory.isDirectory()){
             File[]directories = directory.listFiles();
-            for(File dir : directories){
-                if(dir.exists()){
-                    long id = Long.parseLong(dir.getName());
-                    int size = dir.listFiles().length;
-                    if(!idSize.containsKey(id)){ // если это новый элемент включаем
-                        idSize.put(id,size);
-                        this.template.convertAndSend("/send/photo/check", ow.writeValueAsString(new DefaultMessage(1,id))); // 1 - включить
-                    }else{ // если элемент не имеет больше файлов удаляем и выключаем
-                        if(idSize.get(id) == 0 || size == 0){
-                            System.out.println(idSize.get(id));
-                            idSize.remove(id);
-                            this.template.convertAndSend("/send/photo/check", ow.writeValueAsString(new DefaultMessage(2,id))); // 1 - выключить
-                        }
-                    }
-                }
+            String data = ow.writeValueAsString(directories);
+            byte[] dataBytes = data.getBytes();
+            Checksum crc32 = new CRC32();
+            crc32.update(dataBytes);
+            long md5 = crc32.getValue();
+            if(md5 != checkSum){
+                log.info("Current md5: " + md5 + " | Last md5: " + checkSum);
+                List<ContentDTO> content = contentService.findAllDTO();
+                this.template.convertAndSend("/send/photo/check", ow.writeValueAsString(new DefaultMessage("Control sum checked",content)));
+                checkSum = md5;
             }
         }
     }
@@ -274,12 +272,12 @@ public class ContentController {
 
     @Data
     static class DefaultMessage{
-        private int status;
-        private long id;
+        private String message;
+        private List<ContentDTO> content;
 
-        public DefaultMessage(int status, long id) {
-            this.status = status;
-            this.id = id;
+        public DefaultMessage(String message, List<ContentDTO> content) {
+            this.message = message;
+            this.content = content;
         }
     }
 }
